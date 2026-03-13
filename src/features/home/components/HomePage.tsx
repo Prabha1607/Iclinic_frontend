@@ -11,7 +11,7 @@ export default function HomePage() {
   const isPatient = isAuthenticated && roleId === 1;
   const isFrontDesk = isAuthenticated && roleId === 3;
 
-  
+  // Auto-redirect front desk to their dashboard
   useEffect(() => {
     if (isFrontDesk) {
       navigate("/front-desk", { replace: true });
@@ -109,16 +109,16 @@ export default function HomePage() {
 
       <Header />
 
-      {}
+      {/* ── HERO ─────────────────────────────────── */}
       <section className="hero-gradient dot-grid-bg relative overflow-hidden">
-        {}
+        {/* blobs */}
         <div className="hero-blob w-96 h-96 bg-blue-400 top-[-80px] right-[-60px]" style={{ position: 'absolute' }} />
         <div className="hero-blob w-80 h-80 bg-indigo-300 bottom-[-40px] left-[-60px]" style={{ position: 'absolute' }} />
 
         <div className="relative max-w-6xl mx-auto px-6 py-10 md:py-16 flex flex-col md:flex-row items-center gap-8">
-          {}
+          {/* Left */}
           <div className="flex-1 text-center md:text-left">
-            {}
+            {/* Badge */}
             <div className="fade-up-delay-1 inline-flex items-center gap-2 bg-white border border-blue-100 rounded-full px-4 py-1.5 mb-4 shadow-sm">
               <span className="relative inline-block w-2 h-2 rounded-full bg-green-500 badge-pulse" />
               <span className="text-xs font-medium text-blue-700">AI-Powered Voice Booking</span>
@@ -187,7 +187,7 @@ export default function HomePage() {
               )}
             </div>
 
-            {}
+            {/* Mini trust bar */}
             <div className="fade-up-delay-4 flex items-center gap-6 mt-10 justify-center md:justify-start">
               {[
                 { value: "10k+", label: "Appointments booked" },
@@ -202,14 +202,14 @@ export default function HomePage() {
             </div>
           </div>
 
-          {}
+          {/* Right – visual card */}
           <div className="flex-1 flex justify-center fade-up-delay-3">
             <div className="relative w-full max-w-sm">
-              {}
+              {/* Main card */}
               <div className="bg-white rounded-3xl shadow-2xl border border-blue-100 p-6 relative z-10">
                 <div className="h-1 w-full bg-gradient-to-r from-[#3b5bfc] via-[#7c9afc] to-[#c3cfff] rounded-full mb-5" />
 
-                {}
+                {/* Orb */}
                 <div className="flex justify-center mb-4">
                   <div className="relative w-20 h-20 rounded-full bg-gradient-to-br from-[#eef2ff] to-white border border-blue-100 shadow-lg flex flex-col items-center justify-center gap-1.5">
                     <svg className="w-7 h-7 text-[#3b5bfc]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -231,7 +231,7 @@ export default function HomePage() {
                 </p>
                 <p className="text-center text-xs text-slate-400 mb-5">Ready to assist 24/7</p>
 
-                {}
+                {/* Chat bubbles */}
                 <div className="space-y-2.5 mb-4">
                   <div className="flex justify-start">
                     <div className="bg-[#f0f4ff] text-[#3b5bfc] text-xs px-3.5 py-2 rounded-2xl rounded-tl-sm max-w-[75%] font-medium">
@@ -268,7 +268,7 @@ export default function HomePage() {
                 </div>
               </div>
 
-              {}
+              {/* Floating badge */}
               <div className="absolute -top-3 -right-4 bg-white border border-green-200 rounded-xl px-3 py-1.5 shadow-md flex items-center gap-1.5 z-20">
                 <span className="w-2 h-2 rounded-full bg-green-400 inline-block" />
                 <span className="text-xs font-semibold text-green-700">Live</span>
@@ -278,7 +278,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {}
+      {/* ── HOW IT WORKS ─────────────────────────── */}
       <section className="py-14 bg-white">
         <div className="max-w-6xl mx-auto px-6">
           <div className="text-center mb-10">
@@ -348,7 +348,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {}
+      {/* ── FEATURES ─────────────────────────────── */}
       <section className="py-14 bg-[#f8faff]">
         <div className="max-w-6xl mx-auto px-6">
           <div className="text-center mb-10">
@@ -379,7 +379,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {}
+      {/* ── TESTIMONIALS ─────────────────────────── */}
       <section className="py-14 bg-white">
         <div className="max-w-6xl mx-auto px-6">
           <div className="text-center mb-10">
@@ -434,7 +434,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {}
+      {/* ── CTA ──────────────────────────────────── */}
       <section className="py-14 bg-gradient-to-r from-[#3b5bfc] to-[#5b7fff]">
         <div className="max-w-3xl mx-auto px-6 text-center">
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-4" style={{ fontFamily: "'Syne', sans-serif" }}>
@@ -479,7 +479,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {}
+      {/* ── FOOTER ───────────────────────────────── */}
       <footer className="bg-[#0f1340] text-white py-12">
         <div className="max-w-6xl mx-auto px-6">
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
@@ -519,7 +519,7 @@ export default function HomePage() {
         </div>
       </footer>
 
-      {}
+      {/* ── FLOATING APPOINTMENT WIDGET ──────────── */}
       <AppointmentWidget />
     </div>
   );

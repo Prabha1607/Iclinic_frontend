@@ -105,16 +105,13 @@ function Step1Patient({ onSelect, selected }: { onSelect: (p: Patient) => void; 
   const handleFormChange = (field: string, val: string) => {
     const updated = { ...form, [field]: val };
     setForm(updated);
-    if (touched[field]) {
-      const errs = validateCreate(updated);
-      setFieldErrors((prev) => ({ ...prev, [field]: errs[field] ?? "" }));
-    }
+    if (touched[field]) setFieldErrors(validateCreate(updated));
   };
 
   const handleFormBlur = (field: string) => {
     setTouched((t) => ({ ...t, [field]: true }));
     const errs = validateCreate();
-    setFieldErrors((prev) => ({ ...prev, [field]: errs[field] ?? "" }));
+    setFieldErrors((prev: FieldErrors) => ({ ...prev, [field]: errs[field] }));
   };
 
   const handleSearch = useCallback(async (q: string) => {
@@ -139,18 +136,16 @@ function Step1Patient({ onSelect, selected }: { onSelect: (p: Patient) => void; 
     setServerError("");
     setCreating(true);
     try {
-      const patientProfile: { date_of_birth: string; gender: string; address?: string; preferred_language?: string } = {
-        date_of_birth: form.date_of_birth,
-        gender: form.gender,
-      };
-      if (form.address) patientProfile.address = form.address;
-      if (form.preferred_language) patientProfile.preferred_language = form.preferred_language;
-
       const p = await createPatient({
         first_name: form.first_name, last_name: form.last_name,
         role_id: 1, country_code: form.country_code,
         phone_no: form.phone_no, email: form.email, password: form.password,
-        patient_profile: patientProfile,
+        patient_profile: {
+          date_of_birth: form.date_of_birth,
+          gender: form.gender,
+          address: form.address || undefined,
+          preferred_language: form.preferred_language || undefined,
+        },
       });
       setCreated(p);
       onSelect(p);
@@ -169,7 +164,7 @@ function Step1Patient({ onSelect, selected }: { onSelect: (p: Patient) => void; 
 
   return (
     <div className="h-full flex flex-col gap-6">
-      {}
+      {/* Tab switcher */}
       <div className="flex gap-1 p-1 bg-slate-100 rounded-2xl w-fit">
         {(["search", "create"] as const).map((m) => (
           <button key={m} onClick={() => { setMode(m); setServerError(""); setFieldErrors({}); setTouched({}); }}
@@ -252,10 +247,10 @@ function Step1Patient({ onSelect, selected }: { onSelect: (p: Patient) => void; 
           )}
         </div>
       ) : (
-        
+        /* ── Create New Patient ─────────────────────────────────────── */
         <div className="flex-1 overflow-y-auto pr-1">
           {created ? (
-            
+            /* Success state */
             <div className="space-y-3">
               <div className="flex items-center gap-3 p-5 rounded-2xl bg-emerald-50 border border-emerald-200">
                 <div className="w-10 h-10 rounded-xl bg-emerald-500 flex items-center justify-center flex-shrink-0">
@@ -279,7 +274,7 @@ function Step1Patient({ onSelect, selected }: { onSelect: (p: Patient) => void; 
           ) : (
             <div className="space-y-6">
 
-              {}
+              {/* Section: Account Info */}
               <div>
                 <div className="flex items-center gap-2 mb-4">
                   <div className="w-6 h-6 rounded-lg bg-[#3b5bfc] flex items-center justify-center flex-shrink-0">
@@ -346,14 +341,14 @@ function Step1Patient({ onSelect, selected }: { onSelect: (p: Patient) => void; 
                 </div>
               </div>
 
-              {}
+              {/* Divider */}
               <div className="flex items-center gap-3">
                 <div className="flex-1 h-px bg-slate-100" />
                 <span className="text-[10px] font-bold uppercase tracking-widest text-slate-300">Patient Profile</span>
                 <div className="flex-1 h-px bg-slate-100" />
               </div>
 
-              {}
+              {/* Section: Patient Profile */}
               <div>
                 <div className="flex items-center gap-2 mb-4">
                   <div className="w-6 h-6 rounded-lg bg-violet-500 flex items-center justify-center flex-shrink-0">
@@ -524,11 +519,21 @@ function Step4Slot({ slots, selected, onSelect, loading }: {
   slots: AvailableSlot[]; selected: AvailableSlot | null;
   onSelect: (s: AvailableSlot) => void; loading: boolean;
 }) {
-  const seen = new Set<number>();
+  const now = new Date();
+  const todayStr = now.toISOString().split("T")[0]; // "YYYY-MM-DD"
+  const currentMinutes = now.getHours() * 60 + now.getMinutes();
+
   const available = slots.filter((s) => {
     if (s.status !== "AVAILABLE" || !s.is_active) return false;
-    if (seen.has(s.id)) return false;
-    seen.add(s.id);
+    const slotDate = s.availability_date;
+    // Exclude dates strictly before today
+    if (slotDate < todayStr) return false;
+    // For today, also exclude slots whose start_time has already passed
+    if (slotDate === todayStr) {
+      const [h, m] = s.start_time.split(":").map(Number);
+      const slotMinutes = h * 60 + m;
+      if (slotMinutes <= currentMinutes) return false;
+    }
     return true;
   });
   const grouped = available.reduce<Record<string, AvailableSlot[]>>((acc, slot) => {
@@ -591,7 +596,7 @@ function Step5Confirm({ patient, appointmentType, provider, slot, extra, setExtr
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-        {}
+        {/* Reason for visit — required */}
         <div className="sm:col-span-2">
           <FieldRow label="Reason for Visit" required>
             <input
@@ -605,7 +610,7 @@ function Step5Confirm({ patient, appointmentType, provider, slot, extra, setExtr
           <FieldError msg={extraErrors.reason} />
         </div>
 
-        {}
+        {/* Notes — optional */}
         <div className="sm:col-span-2">
           <FieldRow label="Additional Notes">
             <textarea
@@ -617,7 +622,7 @@ function Step5Confirm({ patient, appointmentType, provider, slot, extra, setExtr
           </FieldRow>
         </div>
 
-        {}
+        {/* Booking channel */}
         <div className="sm:col-span-2">
           <FieldRow label="Booking Channel" required>
             <div className="flex gap-3">
@@ -664,7 +669,7 @@ export default function BookAppointmentWizard() {
     reason: rules.required(e.reason, "Reason for visit"),
   });
 
-  const _handleExtraChange = (field: string, val: string) => {
+  const handleExtraChange = (field: string, val: string) => {
     const next = { ...extra, [field]: val };
     setExtra(next);
     if (extraTouched[field]) setExtraErrors(validateExtra(next));
@@ -704,7 +709,7 @@ export default function BookAppointmentWizard() {
 
   const handleBook = async () => {
     if (!patient || !appointmentType || !provider || !slot) return;
-    
+    // validate step-5 fields
     setExtraTouched({ reason: true });
     const errs = validateExtra();
     setExtraErrors(errs);
@@ -782,16 +787,13 @@ export default function BookAppointmentWizard() {
 
         <div className="mb-10">
           <p className="text-blue-400 text-xs font-bold uppercase tracking-widest mb-2">Book Appointment</p>
-          <h2 className="text-white text-2xl font-bold leading-tight" style={{ fontFamily: "'Syne', sans-serif" }}>
-            New Appointment
-          </h2>
         </div>
 
         <nav className="flex-1 space-y-2">
           {STEPS.map((s) => {
             const done = s.id < step;
             const active = s.id === step;
-            const _locked = s.id > step;
+            const locked = s.id > step;
             return (
               <div key={s.id}
                 className={`flex items-center gap-4 px-4 py-3.5 rounded-2xl transition-all ${

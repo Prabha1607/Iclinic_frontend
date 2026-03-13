@@ -12,8 +12,8 @@ export interface CreatePatientPayload {
   phone_no: string;
   password: string;
   patient_profile: {
-    date_of_birth: string;      
-    gender: string;             
+    date_of_birth: string;      // mandatory per backend
+    gender: string;             // mandatory per backend
     address?: string;
     preferred_language?: string;
   };
@@ -35,7 +35,7 @@ export interface BookAppointmentPayload {
 }
 
 export const initiateCall = (to_number: string): Promise<{ status: string; call_sid?: string }> =>
-  api.post("/api/v1/voice/make-call", null, { params: { to_number } }).then((res) => res.data);
+  api.post<{ status: string; call_sid?: string }>("/api/v1/voice/make-call", null, { params: { to_number } }).then((res) => res.data);
 
 export const searchPatients = (query: string): Promise<Patient[]> =>
   api
@@ -71,9 +71,11 @@ export const fetchProviderSlots = (provider_id: number): Promise<AvailableSlot[]
 export const bookAppointment = (data: BookAppointmentPayload): Promise<{ message: string }> =>
   api.post<{ message: string }>("/api/v1/booking/create", data).then((res) => res.data);
 
-export const getUserAppointments = (user_id: number) =>
+import type { Appointment } from "../../../common/DataModels/Appointments";
+
+export const getUserAppointments = (user_id: number): Promise<Appointment[]> =>
   api
-    .get("/api/v1/booking/list", { params: { user_id, page: 1, page_size: 100 } })
+    .get<Appointment[]>("/api/v1/booking/list", { params: { user_id, page: 1, page_size: 100 } })
     .then((res) => res.data);
 
 export default api;

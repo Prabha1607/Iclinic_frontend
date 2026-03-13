@@ -13,6 +13,7 @@ function getInitials(f: string, l: string) { return `${f[0] ?? ""}${l[0] ?? ""}`
 const AVATAR_COLORS = ["from-violet-500 to-purple-600","from-[#3b5bfc] to-blue-500","from-emerald-500 to-teal-500","from-pink-500 to-rose-500","from-amber-500 to-orange-500"];
 function avatarColor(id: number) { return AVATAR_COLORS[id % AVATAR_COLORS.length]; }
 
+// ─── FieldMsg ────────────────────────────────────────────────────────────────
 function FieldMsg({ msg }: { msg?: string }) {
   if (!msg) return null;
   return (
@@ -29,6 +30,7 @@ function ic(base: string, err?: string) {
   return `${base} ${err ? "!border-red-400 !bg-red-50/30 focus:!ring-red-300 focus:!border-red-400" : ""}`;
 }
 
+// ─── Toast ────────────────────────────────────────────────────────────────────
 function Toast({ message, type, onDismiss }: { message: string; type: "success" | "error"; onDismiss: () => void }) {
   useEffect(() => { const t = setTimeout(onDismiss, 3500); return () => clearTimeout(t); }, [onDismiss]);
   return (
@@ -44,6 +46,7 @@ function Toast({ message, type, onDismiss }: { message: string; type: "success" 
 const GENDERS = ["Male", "Female", "Non-binary", "Prefer not to say", "Other"];
 const LANGUAGES = ["English", "Hindi", "Tamil", "Telugu", "Kannada", "Malayalam", "Marathi", "Bengali", "Arabic", "French", "Spanish", "Mandarin"];
 
+// ─── Update Patient Modal ─────────────────────────────────────────────────────
 function UpdatePatientModal({ patient, onClose, onUpdated }: {
   patient: Patient; onClose: () => void; onUpdated: (u: Patient) => void;
 }) {
@@ -79,8 +82,10 @@ function UpdatePatientModal({ patient, onClose, onUpdated }: {
   };
 
   const handleBlur = (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-    setTouched((t) => ({ ...t, [e.target.name]: true }));
-    setFieldErrors(validate());
+    const name = e.target.name;
+    setTouched((t) => ({ ...t, [name]: true }));
+    const errs = validate();
+    setFieldErrors((prev: FieldErrors) => ({ ...prev, [name]: errs[name] }));
   };
 
   const handleSave = async () => {
@@ -118,7 +123,7 @@ function UpdatePatientModal({ patient, onClose, onUpdated }: {
         style={{ fontFamily: "'DM Sans', sans-serif" }}>
         <style>{`@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Syne:wght@700;800&display=swap');`}</style>
 
-        {}
+        {/* Header */}
         <div className="flex items-center justify-between px-7 pt-6 pb-5 border-b border-slate-100 flex-shrink-0">
           <div className="flex items-center gap-4">
             <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${avatarColor(patient.id)} flex items-center justify-center text-white font-bold text-base flex-shrink-0`}>
@@ -134,10 +139,10 @@ function UpdatePatientModal({ patient, onClose, onUpdated }: {
           </button>
         </div>
 
-        {}
+        {/* Scrollable Form */}
         <div className="px-7 py-6 space-y-6 overflow-y-auto flex-1">
 
-          {}
+          {/* Section: Account */}
           <div>
             <div className="flex items-center gap-2 mb-4">
               <div className="w-5 h-5 rounded-md bg-[#3b5bfc] flex items-center justify-center flex-shrink-0">
@@ -145,29 +150,29 @@ function UpdatePatientModal({ patient, onClose, onUpdated }: {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                 </svg>
               </div>
-              <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Account Information</p>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-[#0f1340]">Account Information</p>
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1.5">First Name <span className="text-red-400">*</span></label>
+                <label className="block text-xs font-bold uppercase tracking-widest text-[#0f1340] mb-1.5">First Name <span className="text-red-400">*</span></label>
                 <input name="first_name" value={form.first_name} onChange={handleChange} onBlur={handleBlur}
                   className={ic(base, fieldErrors.first_name)} placeholder="John" />
                 <FieldMsg msg={fieldErrors.first_name} />
               </div>
               <div>
-                <label className="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1.5">Last Name <span className="text-red-400">*</span></label>
+                <label className="block text-xs font-bold uppercase tracking-widest text-[#0f1340] mb-1.5">Last Name <span className="text-red-400">*</span></label>
                 <input name="last_name" value={form.last_name} onChange={handleChange} onBlur={handleBlur}
                   className={ic(base, fieldErrors.last_name)} placeholder="Doe" />
                 <FieldMsg msg={fieldErrors.last_name} />
               </div>
               <div className="col-span-2">
-                <label className="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1.5">Email <span className="text-red-400">*</span></label>
+                <label className="block text-xs font-bold uppercase tracking-widest text-[#0f1340] mb-1.5">Email <span className="text-red-400">*</span></label>
                 <input name="email" type="email" value={form.email} onChange={handleChange} onBlur={handleBlur}
                   className={ic(base, fieldErrors.email)} placeholder="patient@email.com" />
                 <FieldMsg msg={fieldErrors.email} />
               </div>
               <div className="col-span-2">
-                <label className="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1.5">
+                <label className="block text-xs font-bold uppercase tracking-widest text-[#0f1340] mb-1.5">
                   New Password{" "}
                   <span className="text-slate-300 font-normal normal-case tracking-normal text-[11px]">(leave blank to keep current)</span>
                 </label>
@@ -179,14 +184,14 @@ function UpdatePatientModal({ patient, onClose, onUpdated }: {
             </div>
           </div>
 
-          {}
+          {/* Divider */}
           <div className="flex items-center gap-3">
             <div className="flex-1 h-px bg-slate-100" />
             <span className="text-[10px] font-bold uppercase tracking-widest text-slate-300">Medical Profile</span>
             <div className="flex-1 h-px bg-slate-100" />
           </div>
 
-          {}
+          {/* Section: Medical Profile */}
           <div>
             <div className="flex items-center gap-2 mb-4">
               <div className="w-5 h-5 rounded-md bg-violet-500 flex items-center justify-center flex-shrink-0">
@@ -194,29 +199,29 @@ function UpdatePatientModal({ patient, onClose, onUpdated }: {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                 </svg>
               </div>
-              <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Patient Profile</p>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-[#0f1340]">Patient Profile</p>
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1.5">Date of Birth</label>
+                <label className="block text-xs font-bold uppercase tracking-widest text-[#0f1340] mb-1.5">Date of Birth</label>
                 <input name="date_of_birth" type="date" value={form.date_of_birth}
                   max={new Date().toISOString().split("T")[0]}
                   onChange={handleChange} className={base} />
               </div>
               <div>
-                <label className="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1.5">Gender</label>
+                <label className="block text-xs font-bold uppercase tracking-widest text-[#0f1340] mb-1.5">Gender</label>
                 <select name="gender" value={form.gender} onChange={handleChange} className={base}>
                   <option value="">Select gender...</option>
                   {GENDERS.map((g) => <option key={g} value={g}>{g}</option>)}
                 </select>
               </div>
               <div className="col-span-2">
-                <label className="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1.5">Address</label>
+                <label className="block text-xs font-bold uppercase tracking-widest text-[#0f1340] mb-1.5">Address</label>
                 <input name="address" value={form.address} onChange={handleChange}
                   placeholder="123 Main St, City, State" className={base} />
               </div>
               <div className="col-span-2">
-                <label className="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1.5">Preferred Language</label>
+                <label className="block text-xs font-bold uppercase tracking-widest text-[#0f1340] mb-1.5">Preferred Language</label>
                 <select name="preferred_language" value={form.preferred_language} onChange={handleChange} className={base}>
                   <option value="">Select language (optional)...</option>
                   {LANGUAGES.map((l) => <option key={l} value={l}>{l}</option>)}
@@ -225,14 +230,14 @@ function UpdatePatientModal({ patient, onClose, onUpdated }: {
             </div>
           </div>
 
-          {}
+          {/* Read-only row */}
           <div className="grid grid-cols-2 gap-3">
             <div className="bg-slate-50 rounded-xl px-4 py-3 border border-slate-100">
-              <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">Phone</p>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-[#3b5bfc] mb-1">Phone</p>
               <p className="text-sm font-semibold text-slate-600">{patient.country_code} {patient.phone_no}</p>
             </div>
             <div className="bg-slate-50 rounded-xl px-4 py-3 border border-slate-100">
-              <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">Status</p>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-[#3b5bfc] mb-1">Status</p>
               <span className={`inline-flex items-center gap-1.5 text-xs font-semibold ${patient.is_active ? "text-emerald-600" : "text-slate-400"}`}>
                 <span className={`w-1.5 h-1.5 rounded-full ${patient.is_active ? "bg-emerald-500" : "bg-slate-400"}`} />
                 {patient.is_active ? "Active" : "Inactive"}
@@ -250,7 +255,7 @@ function UpdatePatientModal({ patient, onClose, onUpdated }: {
           )}
         </div>
 
-        {}
+        {/* Footer */}
         <div className="flex gap-3 px-7 pb-6 pt-4 border-t border-slate-100 flex-shrink-0">
           <button onClick={onClose} className="flex-1 py-3 text-sm font-semibold rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 transition">Cancel</button>
           <button onClick={handleSave} disabled={saving}
@@ -265,6 +270,7 @@ function UpdatePatientModal({ patient, onClose, onUpdated }: {
   );
 }
 
+// ─── Filter Dropdown ──────────────────────────────────────────────────────────
 function FilterDropdown({ isActiveFilter, setIsActiveFilter, onClear, hasFilters }: {
   isActiveFilter: boolean | null; setIsActiveFilter: (v: boolean | null) => void; onClear: () => void; hasFilters: boolean;
 }) {
@@ -292,7 +298,7 @@ function FilterDropdown({ isActiveFilter, setIsActiveFilter, onClear, hasFilters
       {open && (
         <div className="absolute right-0 top-full mt-2 w-64 bg-white rounded-2xl border border-slate-200 shadow-xl z-30 overflow-hidden">
           <div className="p-4">
-            <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Status</p>
+            <p className="text-xs font-semibold text-[#0f1340] uppercase tracking-wider mb-2">Status</p>
             <div className="grid grid-cols-3 gap-1.5">
               {([null, true, false] as (boolean | null)[]).map((val) => (
                 <button key={String(val)} onClick={() => setIsActiveFilter(val)}
@@ -316,6 +322,7 @@ function FilterDropdown({ isActiveFilter, setIsActiveFilter, onClear, hasFilters
   );
 }
 
+// ─── Main ─────────────────────────────────────────────────────────────────────
 export default function FrontDeskPatients() {
   const [patients, setPatients] = useState<Patient[]>([]);
   const [loading, setLoading] = useState(false);
@@ -348,7 +355,7 @@ export default function FrontDeskPatients() {
     setPatients((prev) => prev.map((p) => (p.id === updated.id ? updated : p)));
     setEditingPatient(null);
     setToast({ message: "Patient updated successfully.", type: "success" });
-    
+    // Re-fetch to ensure the table reflects the latest server state
     fetchPatients();
   };
 
@@ -364,7 +371,7 @@ export default function FrontDeskPatients() {
       <div className="mb-6">
         <p className="text-xs font-semibold uppercase tracking-widest text-[#3b5bfc] mb-1">Management</p>
         <h1 className="text-3xl font-bold text-[#0f1340]" style={{ fontFamily: "'Syne',sans-serif" }}>Patients</h1>
-        <p className="text-sm text-slate-400 mt-1">Browse and manage all registered patients.</p>
+        <p className="text-sm text-[#374151] mt-1">Browse and manage all registered patients.</p>
       </div>
 
       <div className="flex items-center justify-between gap-3 mb-5">
@@ -416,7 +423,7 @@ export default function FrontDeskPatients() {
                 <thead>
                   <tr className="border-b border-slate-100 bg-slate-50/70">
                     {["ID","Name","Email","Phone","Joined","Status","Actions"].map((h) => (
-                      <th key={h} className="text-left px-5 py-3.5 text-xs font-semibold text-slate-400 uppercase tracking-wider whitespace-nowrap">{h}</th>
+                      <th key={h} className="text-left px-5 py-3.5 text-xs font-semibold text-[#0f1340] uppercase tracking-wider whitespace-nowrap">{h}</th>
                     ))}
                   </tr>
                 </thead>
@@ -432,7 +439,7 @@ export default function FrontDeskPatients() {
                       </td>
                       <td className="px-5 py-3.5 text-slate-500 max-w-[180px]"><span className="truncate block">{p.email}</span></td>
                       <td className="px-5 py-3.5 text-slate-500 whitespace-nowrap">{p.country_code} {p.phone_no}</td>
-                      <td className="px-5 py-3.5 text-slate-400 whitespace-nowrap text-xs">{formatDate(p.created_at)}</td>
+                      <td className="px-5 py-3.5 text-slate-500 whitespace-nowrap text-xs">{formatDate(p.created_at)}</td>
                       <td className="px-5 py-3.5">
                         <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold ${p.is_active ? "bg-emerald-50 text-emerald-600" : "bg-slate-100 text-slate-400"}`}>
                           <span className={`w-1.5 h-1.5 rounded-full ${p.is_active ? "bg-emerald-500" : "bg-slate-400"}`} />
@@ -452,7 +459,7 @@ export default function FrontDeskPatients() {
                 </tbody>
               </table>
             </div>
-            {}
+            {/* Pagination */}
             <div className="flex items-center justify-between px-5 py-3.5 border-t border-slate-100 bg-slate-50/50">
               <p className="text-xs text-slate-400">Showing <span className="font-semibold text-slate-600">{filtered.length}</span> rows · Page <span className="font-semibold text-slate-600">{page}</span></p>
               <div className="flex items-center gap-3">

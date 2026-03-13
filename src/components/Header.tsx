@@ -28,7 +28,7 @@ export default function Header() {
       <header className="w-full bg-white/95 backdrop-blur border-b border-blue-100 shadow-sm sticky top-0 z-50">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3.5 flex items-center justify-between gap-4">
 
-          {}
+          {/* Logo */}
           <Link to="/" className="flex items-center gap-2 group flex-shrink-0">
             <div className="w-8 h-8 rounded-lg bg-[#3b5bfc] flex items-center justify-center shadow-md group-hover:bg-[#2f4edc] transition-colors">
               <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -43,7 +43,7 @@ export default function Header() {
             </span>
           </Link>
 
-          {}
+          {/* Centre Nav Links (desktop only) */}
           <nav className="hidden md:flex items-center gap-1 flex-1 justify-center">
             <Link
               to="/"
@@ -56,7 +56,7 @@ export default function Header() {
               Home
             </Link>
 
-            {}
+            {/* Dashboard — only for patients */}
             {isPatient && (
               <Link
                 to="/dashboard"
@@ -91,7 +91,7 @@ export default function Header() {
               </Link>
             )}
 
-            {}
+            {/* Dashboard — front desk */}
             {isFrontDesk && (
               <Link
                 to="/front-desk"
@@ -110,7 +110,7 @@ export default function Header() {
             )}
           </nav>
 
-          {}
+          {/* Right Side — desktop */}
           <div className="hidden md:flex items-center gap-2 flex-shrink-0">
             {isAuthenticated ? (
               <Logout />
@@ -136,7 +136,7 @@ export default function Header() {
             )}
           </div>
 
-          {}
+          {/* Hamburger — mobile only */}
           <button
             onClick={() => setMenuOpen((v) => !v)}
             className="md:hidden w-9 h-9 rounded-lg flex flex-col items-center justify-center gap-[5px] hover:bg-slate-100 transition-colors"
@@ -148,7 +148,7 @@ export default function Header() {
           </button>
         </div>
 
-        {}
+        {/* Mobile dropdown menu */}
         {menuOpen && (
           <div className="md:hidden mobile-menu-enter border-t border-blue-50 bg-white px-4 py-3 space-y-1">
             <Link
@@ -164,7 +164,7 @@ export default function Header() {
               Home
             </Link>
 
-            {}
+            {/* Dashboard — mobile, patients only */}
             {isPatient && (
               <Link
                 to="/dashboard"
@@ -197,7 +197,7 @@ export default function Header() {
               </Link>
             )}
 
-            {}
+            {/* Dashboard — mobile, front desk */}
             {isFrontDesk && (
               <Link
                 to="/front-desk"

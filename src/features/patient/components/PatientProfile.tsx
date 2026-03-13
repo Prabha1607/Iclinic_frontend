@@ -6,6 +6,7 @@ import type { Patient } from "../../../common/DataModels/Patient";
 import { rules, collectErrors, type FieldErrors } from "../../../common/validation";
 import Header from "../../../components/Header";
 
+// ─── Helpers ─────────────────────────────────────────────────────────────────
 function formatDate(d: string | null | undefined) {
   if (!d) return "—";
   return new Date(d).toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" });
@@ -36,6 +37,7 @@ function avatarGrad(id: number) {
   return `linear-gradient(135deg, ${a}, ${b})`;
 }
 
+// ─── Toast ────────────────────────────────────────────────────────────────────
 function Toast({ message, type, onDismiss }: { message: string; type: "success" | "error"; onDismiss: () => void }) {
   useEffect(() => { const t = setTimeout(onDismiss, 3500); return () => clearTimeout(t); }, [onDismiss]);
   return (
@@ -66,6 +68,7 @@ function ic(base: string, err?: string) {
   return `${base}${err ? " !border-red-400 !bg-red-50/40 focus:!ring-red-300 focus:!border-red-400" : ""}`;
 }
 
+// ─── View-mode field ──────────────────────────────────────────────────────────
 function ViewField({ label, value }: { label: string; value: string }) {
   return (
     <div className="py-3.5 border-b border-slate-100 last:border-0">
@@ -75,6 +78,7 @@ function ViewField({ label, value }: { label: string; value: string }) {
   );
 }
 
+// ─── Locked field (never editable) ───────────────────────────────────────────
 function LockedField({ label, value }: { label: string; value: string }) {
   return (
     <div className="py-3.5 border-b border-slate-100 last:border-0">
@@ -92,6 +96,7 @@ function LockedField({ label, value }: { label: string; value: string }) {
   );
 }
 
+// ─── Skeleton ─────────────────────────────────────────────────────────────────
 function Skeleton() {
   return (
     <div className="min-h-screen" style={{ background: "#f8faff", fontFamily: "'DM Sans', sans-serif" }}>
@@ -120,6 +125,7 @@ function Skeleton() {
   );
 }
 
+// ─── Main ─────────────────────────────────────────────────────────────────────
 export default function PatientProfile() {
   const userId = useAppSelector((s) => s.auth.userId);
   const [patient, setPatient] = useState<Patient | null>(null);
@@ -173,20 +179,16 @@ export default function PatientProfile() {
     });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const name = e.target.name;
-    const next = { ...form, [name]: e.target.value };
+    const next = { ...form, [e.target.name]: e.target.value };
     setForm(next);
-    if (touched[name]) {
-      const errs = validate(next);
-      setFieldErrors((prev) => ({ ...prev, [name]: errs[name] ?? "" }));
-    }
+    if (touched[e.target.name]) setFieldErrors(validate(next));
   };
 
   const handleBlur = (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement>) => {
     const name = e.target.name;
     setTouched((t) => ({ ...t, [name]: true }));
     const errs = validate();
-    setFieldErrors((prev) => ({ ...prev, [name]: errs[name] ?? "" }));
+    setFieldErrors((prev: FieldErrors) => ({ ...prev, [name]: errs[name] }));
   };
 
   const handleCancel = () => {
@@ -281,7 +283,7 @@ export default function PatientProfile() {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-          {}
+          {/* ── Left: Avatar card ── */}
           <div>
             <div className="bg-white rounded-3xl border border-blue-50 shadow-sm overflow-hidden sticky top-24">
               <div className="h-2 w-full" style={{ background: "linear-gradient(90deg, #3b5bfc, #7c9afc)" }} />
@@ -305,7 +307,7 @@ export default function PatientProfile() {
                 </span>
               </div>
 
-              {}
+              {/* Completion + meta */}
               <div className="px-6 pb-6">
                 <div className="bg-slate-50 rounded-2xl p-4 border border-slate-100 mb-4">
                   <div className="flex items-center justify-between mb-2">
@@ -336,10 +338,10 @@ export default function PatientProfile() {
             </div>
           </div>
 
-          {}
+          {/* ── Right: Detail cards ── */}
           <div className="lg:col-span-2 space-y-5">
 
-            {}
+            {/* Account Information */}
             <div className="bg-white rounded-3xl border border-blue-50 shadow-sm overflow-hidden">
               <div className="flex items-center justify-between px-6 pt-5 pb-4 border-b border-slate-100">
                 <div className="flex items-center gap-2">
@@ -366,7 +368,7 @@ export default function PatientProfile() {
               <div className="px-6 py-5">
                 {editing ? (
                   <div className="space-y-4">
-                    {}
+                    {/* Name */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
                         <label className="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1.5">
@@ -386,7 +388,7 @@ export default function PatientProfile() {
                       </div>
                     </div>
 
-                    {}
+                    {/* Email — locked */}
                     <div>
                       <label className="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1.5">
                         Email
@@ -397,7 +399,7 @@ export default function PatientProfile() {
                       </div>
                     </div>
 
-                    {}
+                    {/* Phone — locked */}
                     <div>
                       <label className="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1.5">
                         Phone
@@ -408,7 +410,7 @@ export default function PatientProfile() {
                       </div>
                     </div>
 
-                    {}
+                    {/* Password */}
                     <div>
                       <label className="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1.5">
                         New Password
@@ -458,7 +460,7 @@ export default function PatientProfile() {
               </div>
             </div>
 
-            {}
+            {/* Medical Profile */}
             <div className="bg-white rounded-3xl border border-blue-50 shadow-sm overflow-hidden">
               <div className="flex items-center gap-2 px-6 pt-5 pb-4 border-b border-slate-100">
                 <div className="w-6 h-6 rounded-lg bg-violet-500 flex items-center justify-center">

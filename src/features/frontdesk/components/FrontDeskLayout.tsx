@@ -4,6 +4,7 @@ import { useAppDispatch } from "../../../hooks/hooks";
 import { clearCredentials } from "../../auth/slices/authSlice";
 import { logoutUser } from "../../auth/services/authService";
 
+
 const NAV_ITEMS = [
   {
     to: "/front-desk/patients",

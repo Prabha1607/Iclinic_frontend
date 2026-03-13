@@ -1,55 +1,33 @@
-
-
-export type FieldErrors = Record<string, string>;
+export type FieldErrors = Record<string, string | undefined>;
 
 export const rules = {
-  required: (val: string, label = "This field") =>
-    !val.trim() ? `${label} is required.` : "",
+  required: (val: string, label: string): string =>
+    !val || !val.trim() ? `${label} is required.` : "",
 
-  minLen: (val: string, n: number, label = "This field") =>
-    val.trim().length > 0 && val.trim().length < n
-      ? `${label} must be at least ${n} characters.`
-      : "",
+  email: (val: string): string =>
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val) ? "" : "Enter a valid email address.",
 
-  maxLen: (val: string, n: number, label = "This field") =>
-    val.trim().length > n ? `${label} must be at most ${n} characters.` : "",
+  phone: (val: string): string =>
+    /^\d{6,15}$/.test(val.replace(/\s/g, "")) ? "" : "Enter a valid phone number (digits only).",
 
-  email: (val: string) =>
-    val.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val.trim())
-      ? "Enter a valid email address."
-      : "",
+  password: (val: string): string =>
+    /^(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).{6,}$/.test(val)
+      ? ""
+      : "Min 6 chars, 1 uppercase, 1 number, 1 symbol.",
 
-  
-  phone: (val: string) =>
-    val.trim() && !/^\d{7,15}$/.test(val.trim())
-      ? "Phone must be 7–15 digits (numbers only, no spaces)."
-      : "",
+  confirmPassword: (val: string, original: string): string =>
+    val === original ? "" : "Passwords do not match.",
 
-  
-  countryCode: (val: string) =>
-    val.trim() && !/^\+\d{1,4}$/.test(val.trim())
-      ? "Country code must be e.g. +91, +1."
-      : "",
-
-  
-  password: (val: string) => {
-    if (!val) return "";
-    if (val.length < 6) return "Password must be at least 6 characters.";
-    if (!/[A-Z]/.test(val)) return "Must contain at least one uppercase letter.";
-    if (!/[0-9]/.test(val)) return "Must contain at least one number.";
-    if (!/[!@#$%^&*()\-_=+\[\]{}|;:,.<>/?~]/.test(val))
-      return "Must contain at least one special character.";
-    return "";
-  },
-
-  confirmPassword: (val: string, original: string) =>
-    val !== original ? "Passwords do not match." : "",
+  maxLen: (val: string, max: number, label: string): string =>
+    val.length <= max ? "" : `${label} must be at most ${max} characters.`,
 };
 
-export function collectErrors(checks: Record<string, string>): FieldErrors {
-  const out: FieldErrors = {};
-  for (const [k, v] of Object.entries(checks)) {
-    if (v) out[k] = v;
+export function collectErrors(
+  checks: Record<string, string | undefined>
+): FieldErrors {
+  const errors: FieldErrors = {};
+  for (const [key, msg] of Object.entries(checks)) {
+    if (msg) errors[key] = msg;
   }
-  return out;
+  return errors;
 }

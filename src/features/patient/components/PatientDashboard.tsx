@@ -37,7 +37,7 @@ function SummaryCard({ label, value, icon, bg, textColor }: {
     <div className="rounded-2xl border border-blue-50 bg-white p-5 shadow-sm flex items-center gap-4">
       <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-2xl ${bg}`}>{icon}</div>
       <div>
-        <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">{label}</p>
+        <p className="text-xs font-semibold uppercase tracking-wider text-[#0f1340]">{label}</p>
         <p className={`text-2xl font-bold mt-0.5 ${textColor}`}>{value}</p>
       </div>
     </div>
@@ -61,7 +61,7 @@ function AppointmentCard({ appt }: { appt: Appointment }) {
             <p className="text-base font-bold text-[#0f1340]" style={{ fontFamily: "'Syne', sans-serif" }}>
               {formatDate(appt.scheduled_date)}
             </p>
-            <p className="text-sm text-slate-400 mt-0.5">
+            <p className="text-sm text-[#374151] mt-0.5">
               {formatTime(appt.scheduled_start_time)} – {formatTime(appt.scheduled_end_time)}
             </p>
           </div>
@@ -73,11 +73,11 @@ function AppointmentCard({ appt }: { appt: Appointment }) {
 
         <div className="flex items-center gap-2 mb-3">
           <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#3b5bfc] to-[#7c9afc] flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
-            {appt.patient_name.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase()}
+            {appt.patient_name.split(" ").map((n: string) => n[0]).join("").slice(0, 2).toUpperCase()}
           </div>
           <div>
             <p className="text-sm font-semibold text-[#0f1340]">{appt.patient_name}</p>
-            <p className="text-xs text-slate-400">Patient</p>
+            <p className="text-xs font-semibold text-[#3b5bfc]">Patient</p>
           </div>
         </div>
 
@@ -85,7 +85,7 @@ function AppointmentCard({ appt }: { appt: Appointment }) {
 
         {appt.reason_for_visit && (
           <div className="flex items-start gap-2">
-            <span className="text-xs text-slate-400 w-20 flex-shrink-0 pt-0.5">Reason</span>
+            <span className="text-xs font-semibold text-[#0f1340] w-20 flex-shrink-0 pt-0.5">Reason</span>
             <span className="text-xs text-slate-600 font-medium">{appt.reason_for_visit}</span>
           </div>
         )}
@@ -117,7 +117,7 @@ export default function PatientDashboard() {
     setLoading(true);
     setError("");
     getUserAppointments(userId)
-      .then((data) => setAppointments(data))
+      .then((data: Appointment[]) => setAppointments(data))
       .catch(() => setError("Unable to load appointments. Please try again later."))
       .finally(() => setLoading(false));
   }, [userId]);
@@ -155,7 +155,7 @@ export default function PatientDashboard() {
           <h1 className="text-3xl font-bold text-[#0f1340]" style={{ fontFamily: "'Syne', sans-serif" }}>
             My Appointments
           </h1>
-          <p className="text-sm text-slate-400 mt-1">Track and review all your appointment history in one place.</p>
+          <p className="text-sm text-[#374151] mt-1">Track and review all your appointment history in one place.</p>
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
@@ -229,4 +229,6 @@ export default function PatientDashboard() {
     </div>
   );
 }
+
+
 

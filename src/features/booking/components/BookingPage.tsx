@@ -1,4 +1,4 @@
-
+// src/features/booking/components/BookingPage.tsx
 import { useState } from "react";
 import { initiateCall } from "../services/bookingService";
 import Header from "../../../components/Header";
@@ -110,27 +110,27 @@ export default function BookingPage() {
         }
       `}</style>
 
-      {}
+      {/* Header */}
       <Header />
 
-      {}
+      {/* Main */}
       <div className="flex-1 flex items-center justify-center px-4 py-16 dot-grid">
         <div className="w-full max-w-sm">
 
-          {}
+          {/* Mic / Voice orb */}
           <div className="flex flex-col items-center mb-10">
             <div className="relative flex items-center justify-center mb-5">
-              {}
+              {/* Pulse rings */}
               <div className="pulse-ring absolute w-24 h-24 rounded-full bg-[#3b5bfc]/10" />
               <div className="pulse-ring-2 absolute w-24 h-24 rounded-full bg-[#3b5bfc]/10" />
               <div className="pulse-ring-3 absolute w-24 h-24 rounded-full bg-[#3b5bfc]/10" />
-              {}
+              {/* Core */}
               <div className="relative z-10 w-20 h-20 rounded-full bg-white shadow-xl border border-blue-100 flex flex-col items-center justify-center gap-1.5">
                 <svg className="w-7 h-7 text-[#3b5bfc]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8}
                     d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4M9 11V7a3 3 0 016 0v4a3 3 0 01-6 0z" />
                 </svg>
-                {}
+                {/* Mini waveform */}
                 <div className="waveform flex items-center gap-[3px]">
                   <span /><span /><span /><span /><span /><span /><span />
                 </div>
@@ -145,16 +145,16 @@ export default function BookingPage() {
             </p>
           </div>
 
-          {}
+          {/* Card */}
           <div className="bg-white rounded-2xl shadow-sm border border-blue-100 overflow-hidden">
 
-            {}
+            {/* Top strip */}
             <div className="h-1 w-full bg-gradient-to-r from-[#3b5bfc] via-[#7c9afc] to-[#c3cfff]" />
 
             <div className="p-6">
               <form onSubmit={handleSubmit} className="space-y-4">
 
-                {}
+                {/* Phone input */}
                 <div>
                   <label className="block text-xs font-medium text-slate-500 mb-1.5 uppercase tracking-wider">
                     Patient Phone
@@ -184,7 +184,7 @@ export default function BookingPage() {
                   </div>
                 </div>
 
-                {}
+                {/* Message */}
                 {message && (
                   <div className={`fade-in flex items-start gap-2.5 rounded-xl px-3.5 py-3 text-sm ${
                     message.isError
@@ -202,7 +202,7 @@ export default function BookingPage() {
                   </div>
                 )}
 
-                {}
+                {/* Submit */}
                 <button
                   type="submit"
                   disabled={isLoading}
@@ -228,7 +228,7 @@ export default function BookingPage() {
               </form>
             </div>
 
-            {}
+            {/* Bottom capabilities strip */}
             <div className="border-t border-slate-100 px-6 py-4 bg-slate-50/60">
               <p className="text-[11px] text-slate-400 uppercase tracking-widest font-medium mb-2.5">
                 Assistant can handle
@@ -244,7 +244,7 @@ export default function BookingPage() {
             </div>
           </div>
 
-          {}
+          {/* Footer note */}
           <p className="text-center text-[11px] text-slate-400 mt-5 font-light">
             Call is AI-assisted · Powered by iClinic Voice
           </p>
@@ -253,4 +253,5 @@ export default function BookingPage() {
     </div>
   );
 }
+
 

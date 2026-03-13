@@ -118,20 +118,20 @@ export default function AppointmentWidget() {
         }
       `}</style>
 
-      {}
+      {/* Fixed container */}
       <div className="fixed bottom-6 right-6 z-[100] flex flex-col items-end gap-3">
 
-        {}
+        {/* ── Expanded Panel ── */}
         {(step === "open" || step === "loading" || step === "success") && (
           <div
             className="panel-enter bg-white rounded-2xl shadow-2xl border border-blue-100 w-72 overflow-hidden"
             style={{ fontFamily: "'DM Sans', sans-serif" }}
           >
-            {}
+            {/* Top gradient strip */}
             <div className="h-1 w-full bg-gradient-to-r from-[#3b5bfc] via-[#7c9afc] to-[#c3cfff]" />
 
             {step === "success" ? (
-              
+              /* ── Success State ── */
               <div className="p-6 text-center">
                 <div className="success-check w-14 h-14 rounded-full bg-green-50 border-2 border-green-200 flex items-center justify-center mx-auto mb-4">
                   <svg className="w-7 h-7 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -152,7 +152,7 @@ export default function AppointmentWidget() {
                 </button>
               </div>
             ) : step === "loading" ? (
-              
+              /* ── Loading State ── */
               <div className="p-6 text-center">
                 <div className="w-12 h-12 rounded-full bg-[#eef2ff] flex items-center justify-center mx-auto mb-4">
                   <svg className="w-5 h-5 text-[#3b5bfc] animate-spin" fill="none" viewBox="0 0 24 24">
@@ -166,9 +166,9 @@ export default function AppointmentWidget() {
                 </div>
               </div>
             ) : (
-              
+              /* ── Open / Form State ── */
               <div className="p-5">
-                {}
+                {/* Header row */}
                 <div className="flex items-start justify-between mb-4">
                   <div>
                     <p className="font-bold text-[#0f1340] text-sm leading-snug" style={{ fontFamily: "'Syne', sans-serif" }}>
@@ -240,10 +240,10 @@ export default function AppointmentWidget() {
           </div>
         )}
 
-        {}
+        {/* ── Floating Round Button ── */}
         {step === "idle" && (
           <div className="flex items-center gap-3">
-            {}
+            {/* Tooltip label */}
             <div className="widget-tooltip relative bg-[#0f1340] text-white text-xs font-medium px-3.5 py-2 rounded-xl shadow-lg whitespace-nowrap">
               Book an appointment
               <div
@@ -252,7 +252,7 @@ export default function AppointmentWidget() {
               />
             </div>
 
-            {}
+            {/* Round button */}
             <button
               onClick={handleOpen}
               className="widget-bounce relative w-14 h-14 rounded-full bg-[#3b5bfc] hover:bg-[#2f4edc] active:scale-95 shadow-xl flex items-center justify-center transition-colors focus:outline-none"
@@ -268,7 +268,7 @@ export default function AppointmentWidget() {
           </div>
         )}
 
-        {}
+        {/* ── Close button when panel is open ── */}
         {(step === "open" || step === "loading" || step === "success") && (
           <button
             onClick={handleClose}

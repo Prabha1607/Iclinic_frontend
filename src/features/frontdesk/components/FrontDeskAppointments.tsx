@@ -74,7 +74,7 @@ function initials(name: string) {
 function DetailRow({ label, value }: { label: string; value?: string | number | null }) {
   return (
     <div className="flex flex-col gap-0.5">
-      <span className="text-[10px] font-semibold uppercase tracking-widest text-slate-400">
+      <span className="text-[10px] font-semibold uppercase tracking-widest text-[#3b5bfc]">
         {label}
       </span>
       <span className="text-sm text-slate-700 font-medium">
@@ -240,7 +240,7 @@ function ViewModal({
                     />
                     {appointment.provider.provider_profile?.bio && (
                       <div className="col-span-2 flex flex-col gap-0.5">
-                        <span className="text-[10px] font-semibold uppercase tracking-widest text-slate-400">
+                        <span className="text-[10px] font-semibold uppercase tracking-widest text-[#3b5bfc]">
                           Bio
                         </span>
                         <span className="text-sm text-slate-600">
@@ -379,7 +379,7 @@ function CancelModal({
               >
                 Cancel Appointment
               </h3>
-              <p className="text-sm text-slate-400 mt-0.5">
+              <p className="text-sm text-slate-500 mt-0.5">
                 {appointment.patient_name} · {formatDate(appointment.scheduled_date)}
               </p>
             </div>
@@ -393,7 +393,7 @@ function CancelModal({
             </button>
           </div>
           <div className="mb-5">
-            <label className="block text-xs font-medium text-slate-500 mb-1.5 uppercase tracking-wider">
+            <label className="block text-xs font-semibold text-[#0f1340] mb-1.5 uppercase tracking-wider">
               Reason <span className="text-red-400">*</span>
             </label>
             <textarea
@@ -519,7 +519,7 @@ function FilterDropdown({
         <div className="absolute right-0 top-full mt-2 w-72 bg-white rounded-2xl border border-slate-200 shadow-xl z-30 overflow-hidden">
           <div className="p-4 space-y-4">
             <div>
-              <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
+              <p className="text-xs font-semibold text-[#0f1340] uppercase tracking-wider mb-2">
                 Status
               </p>
               <div className="grid grid-cols-2 gap-1.5">
@@ -540,12 +540,12 @@ function FilterDropdown({
             </div>
 
             <div>
-              <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
+              <p className="text-xs font-semibold text-[#0f1340] uppercase tracking-wider mb-2">
                 Date Range
               </p>
               <div className="space-y-2">
                 <div>
-                  <label className="block text-[11px] text-slate-400 mb-1">From</label>
+                  <label className="block text-[11px] font-semibold text-[#374151] mb-1">From</label>
                   <input
                     type="date"
                     value={draftFrom}
@@ -554,7 +554,7 @@ function FilterDropdown({
                   />
                 </div>
                 <div>
-                  <label className="block text-[11px] text-slate-400 mb-1">
+                  <label className="block text-[11px] font-semibold text-[#374151] mb-1">
                     To{" "}
                     <span className="text-slate-300">
                       {draftFrom ? `(after ${draftFrom})` : "(select From first)"}
@@ -605,7 +605,7 @@ export default function FrontDeskAppointments() {
   const [appliedTo, setAppliedTo] = useState("");
 
   const [search, setSearch] = useState("");
-  const [_doctorSearch, setDoctorSearch] = useState("");
+  const [doctorSearch, setDoctorSearch] = useState("");
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [hasMore, setHasMore] = useState(true);
@@ -750,7 +750,7 @@ export default function FrontDeskAppointments() {
         >
           Appointments
         </h1>
-        <p className="text-sm text-slate-400 mt-1">
+        <p className="text-sm text-[#374151] mt-1">
           View and manage all patient appointments.
         </p>
       </div>
@@ -772,7 +772,7 @@ export default function FrontDeskAppointments() {
               {c.icon}
             </div>
             <div>
-              <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+              <p className="text-xs font-semibold uppercase tracking-wider text-[#0f1340]">
                 {c.label}
               </p>
               <p className={`text-2xl font-bold ${c.color}`}>{c.value}</p>
@@ -858,7 +858,7 @@ export default function FrontDeskAppointments() {
                       (h) => (
                         <th
                           key={h}
-                          className="text-left px-5 py-3.5 text-xs font-semibold text-slate-400 uppercase tracking-wider whitespace-nowrap"
+                          className="text-left px-5 py-3.5 text-xs font-semibold text-[#0f1340] uppercase tracking-wider whitespace-nowrap"
                         >
                           {h}
                         </th>
@@ -905,7 +905,7 @@ export default function FrontDeskAppointments() {
                                 {doctorName}
                               </p>
                               {specialization && (
-                                <p className="text-[10px] text-slate-400">{specialization}</p>
+                                <p className="text-[10px] text-slate-500">{specialization}</p>
                               )}
                             </div>
                           </div>

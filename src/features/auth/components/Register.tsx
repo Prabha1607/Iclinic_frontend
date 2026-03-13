@@ -37,8 +37,8 @@ function FieldMsg({ msg }: { msg?: string }) {
 }
 
 function ic(err?: string) {
-  return `w-full px-4 py-2.5 rounded-xl border text-[#0f1340] placeholder-slate-300 focus:outline-none focus:ring-2 focus:border-transparent transition text-sm ${
-    err ? "border-red-400 bg-red-50/30 focus:ring-red-300" : "border-slate-200 bg-white focus:ring-[#3b5bfc]/30 focus:border-[#3b5bfc]"
+  return `w-full px-4 py-2.5 rounded-xl border text-blue-900 placeholder-blue-300 focus:outline-none focus:ring-2 focus:border-transparent transition text-sm ${
+    err ? "border-red-400 bg-red-50/30 focus:ring-red-300" : "border-blue-200 bg-blue-50/50 focus:ring-blue-400"
   }`;
 }
 
@@ -49,6 +49,8 @@ export default function Register() {
   const [serverError, setServerError] = useState("");
   const [loading, setLoading] = useState(false);
   const [touched, setTouched] = useState<Record<string, boolean>>({});
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const validate = (f = form): FieldErrors => collectErrors({
     first_name:      rules.required(f.first_name, "First name") || rules.maxLen(f.first_name, 100, "First name"),
@@ -62,21 +64,16 @@ export default function Register() {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const next = { ...form, [e.target.name]: e.target.value };
     setForm(next);
-    if (touched[e.target.name]) {
-      const errs = validate(next);
-      setFieldErrors((prev) => ({ ...prev, [e.target.name]: errs[e.target.name] ?? "" }));
-    }
-    if (e.target.name === "password" && touched.confirmPassword) {
-      const errs = validate(next);
-      setFieldErrors((prev) => ({ ...prev, confirmPassword: errs.confirmPassword ?? "" }));
-    }
+    if (touched[e.target.name]) setFieldErrors(validate(next));
+    // re-validate confirmPassword live when password changes
+    if (e.target.name === "password" && touched.confirmPassword) setFieldErrors(validate(next));
   };
 
   const handleBlur = (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement>) => {
     const name = e.target.name;
     setTouched((t) => ({ ...t, [name]: true }));
     const errs = validate();
-    setFieldErrors((prev) => ({ ...prev, [name]: errs[name] ?? "" }));
+    setFieldErrors((prev: FieldErrors) => ({ ...prev, [name]: errs[name] }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -96,21 +93,21 @@ export default function Register() {
     } finally { setLoading(false); }
   };
 
-  const lbl = "block text-sm font-medium text-[#0f1340] mb-1.5";
+  const lbl = "block text-sm font-medium text-blue-800 mb-1.5";
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ fontFamily: "'DM Sans', sans-serif", background: "#f8faff" }}>
-      <style>{`@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Syne:wght@700;800&display=swap');`}</style>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50 flex flex-col">
       <Header />
       <div className="flex-1 flex items-center justify-center px-4 py-10">
         <div className="w-full max-w-lg">
-          <div className="bg-white rounded-2xl shadow-lg border border-slate-100 p-8">
+          <div className="bg-white rounded-2xl shadow-lg border border-blue-100 p-8">
             <div className="mb-8">
-              <h2 className="text-2xl font-bold text-[#0f1340] mb-1" style={{ fontFamily: "'Syne', sans-serif" }}>Create account</h2>
-              <p className="text-sm text-slate-400">Join iClinic to manage appointments</p>
+              <h2 className="text-2xl font-bold text-blue-900 mb-1">Create account</h2>
+              <p className="text-sm text-blue-400">Join iClinic to manage appointments</p>
             </div>
 
             <form onSubmit={handleSubmit} noValidate className="space-y-4">
+              {/* Name row */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label htmlFor="first_name" className={lbl}>First Name <span className="text-red-400">*</span></label>
@@ -128,6 +125,7 @@ export default function Register() {
                 </div>
               </div>
 
+              {/* Email */}
               <div>
                 <label htmlFor="email" className={lbl}>Email <span className="text-red-400">*</span></label>
                 <input id="email" name="email" type="email" autoComplete="email"
@@ -136,11 +134,12 @@ export default function Register() {
                 <FieldMsg msg={fieldErrors.email} />
               </div>
 
+              {/* Phone */}
               <div>
                 <label htmlFor="phone_no" className={lbl}>Phone Number <span className="text-red-400">*</span></label>
                 <div className="flex gap-2">
                   <select name="country_code" value={form.country_code} onChange={handleChange} onBlur={handleBlur}
-                    className="px-3 py-2.5 rounded-xl border border-slate-200 bg-white text-[#0f1340] focus:outline-none focus:ring-2 focus:ring-[#3b5bfc]/30 focus:border-[#3b5bfc] text-sm flex-shrink-0 transition">
+                    className="px-3 py-2.5 rounded-xl border border-blue-200 bg-blue-50/50 text-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm flex-shrink-0">
                     {COUNTRY_CODES.map((c) => <option key={c.value} value={c.value}>{c.label}</option>)}
                   </select>
                   <div className="flex-1">
@@ -152,23 +151,58 @@ export default function Register() {
                 <FieldMsg msg={fieldErrors.phone_no} />
               </div>
 
+              {/* Password */}
               <div>
                 <label htmlFor="password" className={lbl}>Password <span className="text-red-400">*</span></label>
-                <input id="password" name="password" type="password" autoComplete="new-password"
-                  value={form.password} onChange={handleChange} onBlur={handleBlur}
-                  placeholder="Min 6 chars, 1 uppercase, 1 number, 1 symbol"
-                  className={ic(fieldErrors.password)} />
+                <div className="relative">
+                  <input id="password" name="password" type={showPassword ? "text" : "password"} autoComplete="new-password"
+                    value={form.password} onChange={handleChange} onBlur={handleBlur}
+                    placeholder="Min 6 chars, 1 uppercase, 1 number, 1 symbol"
+                    className={ic(fieldErrors.password)} />
+                  <button type="button" onClick={() => setShowPassword((v) => !v)}
+                    className="absolute inset-y-0 right-3 flex items-center text-blue-300 hover:text-blue-600 transition-colors"
+                    tabIndex={-1} aria-label={showPassword ? "Hide password" : "Show password"}>
+                    {showPassword ? (
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+                      </svg>
+                    ) : (
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                      </svg>
+                    )}
+                  </button>
+                </div>
                 <FieldMsg msg={fieldErrors.password} />
               </div>
 
+              {/* Confirm Password */}
               <div>
                 <label htmlFor="confirmPassword" className={lbl}>Confirm Password <span className="text-red-400">*</span></label>
-                <input id="confirmPassword" name="confirmPassword" type="password" autoComplete="new-password"
-                  value={form.confirmPassword} onChange={handleChange} onBlur={handleBlur} placeholder="Repeat password"
-                  className={ic(fieldErrors.confirmPassword)} />
+                <div className="relative">
+                  <input id="confirmPassword" name="confirmPassword" type={showConfirmPassword ? "text" : "password"} autoComplete="new-password"
+                    value={form.confirmPassword} onChange={handleChange} onBlur={handleBlur} placeholder="Repeat password"
+                    className={ic(fieldErrors.confirmPassword)} />
+                  <button type="button" onClick={() => setShowConfirmPassword((v) => !v)}
+                    className="absolute inset-y-0 right-3 flex items-center text-blue-300 hover:text-blue-600 transition-colors"
+                    tabIndex={-1} aria-label={showConfirmPassword ? "Hide password" : "Show password"}>
+                    {showConfirmPassword ? (
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+                      </svg>
+                    ) : (
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                      </svg>
+                    )}
+                  </button>
+                </div>
                 <FieldMsg msg={fieldErrors.confirmPassword} />
               </div>
 
+              {/* Server error */}
               {serverError && (
                 <div className="flex items-start gap-2 bg-red-50 border border-red-200 rounded-xl px-4 py-3">
                   <svg className="w-4 h-4 text-red-500 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
@@ -179,7 +213,7 @@ export default function Register() {
               )}
 
               <button type="submit" disabled={loading}
-                className="w-full bg-[#3b5bfc] hover:bg-[#2f4edc] disabled:opacity-50 text-white font-semibold py-2.5 rounded-xl transition-colors shadow-sm text-sm mt-2">
+                className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-300 text-white font-semibold py-2.5 rounded-xl transition-colors shadow-sm text-sm mt-2">
                 {loading
                   ? <span className="flex items-center justify-center gap-2">
                       <svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
@@ -192,9 +226,9 @@ export default function Register() {
               </button>
             </form>
 
-            <p className="mt-6 text-center text-sm text-slate-400">
+            <p className="mt-6 text-center text-sm text-blue-400">
               Already have an account?{" "}
-              <Link to="/login" className="text-[#3b5bfc] font-medium hover:text-[#2f4edc] transition-colors">Login</Link>
+              <Link to="/login" className="text-blue-600 font-medium hover:text-blue-800 transition-colors">Login</Link>
             </p>
           </div>
         </div>

@@ -1,38 +1,77 @@
-import axios from 'axios'
-import { store, type RootState } from '../app/store'
-import { setCredentials, clearCredentials, getTokenCookie } from '../features/auth/slices/authSlice'
+import axios from 'axios';
+import { store, type RootState } from '../app/store';
+import {
+  setCredentials,
+  clearCredentials,
+  getTokenCookie,
+} from '../features/auth/slices/authSlice';
 
-const BASE_URL = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8000'
+const AUTH_URL = (import.meta.env.VITE_AUTH_URL ?? '').replace(/\/$/, '');
+const MAIN_URL = (import.meta.env.VITE_MAIN_URL ?? '').replace(/\/$/, '');
+
+const _AUTH_URL =
+  AUTH_URL ||
+  (typeof window !== 'undefined' && window.location.port === '5173'
+    ? 'http://localhost:8001'
+    : '');
+const _MAIN_URL =
+  MAIN_URL ||
+  (typeof window !== 'undefined' && window.location.port === '5173'
+    ? 'http://localhost:8000'
+    : '');
+
+const AUTH_PREFIXES = ['/api/v1/auth/', '/api/v1/users/'];
+
+export function resolveBaseURL(path: string): string {
+  return AUTH_PREFIXES.some((p) => path.startsWith(p)) ? _AUTH_URL : _MAIN_URL;
+}
 
 const api = axios.create({
-  baseURL: BASE_URL,
   withCredentials: true,
   headers: { 'Content-Type': 'application/json' },
-})
+});
 
-// ── Attach access token to every request ─────────────────────────────────────
-api.interceptors.request.use((config) => {
-  const state = store.getState() as RootState
-  // Prefer in-memory store token; fall back to cookie on first load after refresh
-  const token = state.auth.token ?? getTokenCookie()
-  if (token) config.headers['Authorization'] = `Bearer ${token}`
-  return config
-})
+api.interceptors.request.use(
+  (config) => {
+    if (!config.url) {
+      return Promise.reject(
+        new Error('[api] Request cancelled: config.url is undefined or empty'),
+      );
+    }
 
-// ── Token refresh with queue (prevents duplicate refresh calls) ───────────────
-let refreshPromise: Promise<string> | null = null
+    config.baseURL = resolveBaseURL(config.url);
+
+    const state = store.getState() as RootState;
+    const token = state.auth.token ?? getTokenCookie();
+    if (token) {
+      config.headers['Authorization'] = `Bearer ${token}`;
+    }
+
+    return config;
+  },
+  (error) => Promise.reject(error),
+);
+
+let refreshPromise: Promise<string> | null = null;
+
+function forceLogout() {
+  store.dispatch(clearCredentials());
+  setTimeout(() => {
+    window.location.href = '/login';
+  }, 100);
+}
 
 async function doRefresh(): Promise<string> {
-  if (refreshPromise) return refreshPromise
+  if (refreshPromise) return refreshPromise;
+
   refreshPromise = axios
-    .post<{ access_token: string }>(
-      `${BASE_URL}/api/v1/auth/refresh`,
-      null,
-      { withCredentials: true }
-    )
+    .post<{ access_token: string }>(`${_AUTH_URL}/api/v1/auth/refresh`, null, {
+      withCredentials: true,
+    })
     .then((res) => {
-      const newToken = res.data.access_token
-      const s = store.getState() as RootState
+      const newToken = res.data.access_token;
+
+      const s = store.getState() as RootState;
       store.dispatch(
         setCredentials({
           token: newToken,
@@ -43,48 +82,55 @@ async function doRefresh(): Promise<string> {
             role_id: s.auth.roleId ?? 0,
             phone_number: '',
           },
-        })
-      )
-      api.defaults.headers.common['Authorization'] = `Bearer ${newToken}`
-      return newToken
+        }),
+      );
+
+      return newToken;
+    })
+    .catch((err) => {
+      forceLogout();
+      return Promise.reject(err);
     })
     .finally(() => {
-      refreshPromise = null
-    })
-  return refreshPromise
+      refreshPromise = null;
+    });
+
+  return refreshPromise;
 }
 
-// ── Response interceptor — handle 401 with token rotation ────────────────────
 api.interceptors.response.use(
   (response) => response,
-  async (error) => {
-    const originalRequest = error.config
 
-    // Don't attempt refresh for auth endpoints or already-retried requests
-    const isAuthEndpoint = originalRequest?.url?.includes('/auth/')
-    if (
-      error.response?.status !== 401 ||
-      originalRequest?._retry ||
-      isAuthEndpoint
-    ) {
-      return Promise.reject(error)
+  async (error) => {
+    const originalRequest = error.config;
+
+    const isAuthEndpoint = originalRequest?.url?.includes('/api/v1/auth/');
+    const alreadyRetried = originalRequest?._retry === true;
+    const is401 = error.response?.status === 401;
+
+    if (!is401 || alreadyRetried || isAuthEndpoint) {
+      return Promise.reject(error);
     }
 
-    originalRequest._retry = true
+    originalRequest._retry = true;
 
     try {
-      const newToken = await doRefresh()
+      const newToken = await doRefresh();
+
       originalRequest.headers = {
         ...originalRequest.headers,
         Authorization: `Bearer ${newToken}`,
-      }
-      return api(originalRequest)
-    } catch (refreshError) {
-      store.dispatch(clearCredentials())
-      window.location.href = '/login'
-      return Promise.reject(refreshError)
-    }
-  }
-)
+      };
 
-export default api
+      if (originalRequest.url) {
+        originalRequest.baseURL = resolveBaseURL(originalRequest.url);
+      }
+
+      return api(originalRequest);
+    } catch {
+      return Promise.reject(error);
+    }
+  },
+);
+
+export default api;

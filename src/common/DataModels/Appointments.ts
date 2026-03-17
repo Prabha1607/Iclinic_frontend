@@ -47,11 +47,11 @@ export interface Appointment {
   scheduled_date: string;
   scheduled_start_time: string;
   scheduled_end_time: string;
-  status: "SCHEDULED" | "CANCELLED" | "COMPLETED";
+  status: 'SCHEDULED' | 'CANCELLED' | 'COMPLETED';
   reason_for_visit?: string;
   notes?: string;
   instructions?: string;
-  booking_channel?: "VOICE" | "WEB";
+  booking_channel?: 'VOICE' | 'WEB';
   is_active?: boolean;
   created_at: string;
   updated_at?: string;

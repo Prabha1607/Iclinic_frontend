@@ -1,27 +1,29 @@
-import { createBrowserRouter, Navigate, Outlet } from "react-router-dom";
-import App from "../App";
-import HomePage from "../features/home/components/HomePage";
-import Login from "../features/auth/components/Login";
-import Register from "../features/auth/components/Register";
-import PatientDashboard from "../features/patient/components/PatientDashboard";
-import PatientProfile from "../features/patient/components/PatientProfile";
-import BookingPage from "../features/booking/components/BookingPage";
-import BookAppointmentWizard from "../features/booking/components/BookAppointmentWizard";
-import FrontDeskLayout from "../features/frontdesk/components/FrontDeskLayout";
-import FrontDeskPatients from "../features/frontdesk/components/FrontDeskPatients";
-import FrontDeskAppointments from "../features/frontdesk/components/FrontDeskAppointments";
-import RequireAuth from "../components/RequireAuth";
-import RequireRole from "../components/RequireRole";
+import { createBrowserRouter, Navigate, Outlet } from 'react-router-dom';
+import App from '../App';
+import HomePage from '../features/home/components/HomePage';
+import Login from '../features/auth/components/Login';
+import Register from '../features/auth/components/Register';
+import PatientDashboard from '../features/patientManagement/patient-profile/components/PatientDashboard';
+import PatientProfile from '../features/patientManagement/patient-profile/components/PatientProfile';
+import BookingPage from '../features/bookAppointment/patient-bookAppointment/components/BookingPage';
+import BookAppointmentWizard from '../features/bookAppointment/frontdesk-bookAppointment/components/BookAppointmentWizard';
+import FrontDeskLayout from '../features/layout/frontdesk-layout/components/FrontDeskLayout';
+import FrontDeskPatients from '../features/patientManagement/frontdesk-patient/components/FrontDeskPatients';
+import FrontDeskAppointments from '../features/appointments/frontdesk-appointments/components/FrontDeskAppointments';
+import FrontDeskProviders from '../features/providerManagement/frontdesk-provider/components/FrontDeskProviders';
+import SlotManagement from '../features/slotManagement/frontdesk-slots/components/SlotManagement';
+import RequireAuth from '../components/RequireAuth';
+import RequireRole from '../components/RequireRole';
 
 const router = createBrowserRouter([
   {
-    path: "/",
+    path: '/',
     element: <App />,
     children: [
       { index: true, element: <HomePage /> },
-      { path: "login", element: <Login /> },
-      { path: "register", element: <Register /> },
-      { path: "booking", element: <BookingPage /> },
+      { path: 'login', element: <Login /> },
+      { path: 'register', element: <Register /> },
+      { path: 'booking', element: <BookingPage /> },
       {
         element: (
           <RequireAuth>
@@ -30,7 +32,7 @@ const router = createBrowserRouter([
         ),
         children: [
           {
-            path: "dashboard",
+            path: 'dashboard',
             element: (
               <RequireRole allowedRoles={[1]}>
                 <PatientDashboard />
@@ -38,7 +40,7 @@ const router = createBrowserRouter([
             ),
           },
           {
-            path: "profile",
+            path: 'profile',
             element: (
               <RequireRole allowedRoles={[1]}>
                 <PatientProfile />
@@ -46,7 +48,7 @@ const router = createBrowserRouter([
             ),
           },
           {
-            path: "front-desk",
+            path: 'front-desk',
             element: (
               <RequireRole allowedRoles={[3]}>
                 <Outlet />
@@ -57,11 +59,13 @@ const router = createBrowserRouter([
                 element: <FrontDeskLayout />,
                 children: [
                   { index: true, element: <Navigate to="patients" replace /> },
-                  { path: "patients", element: <FrontDeskPatients /> },
-                  { path: "appointments", element: <FrontDeskAppointments /> },
+                  { path: 'patients', element: <FrontDeskPatients /> },
+                  { path: 'appointments', element: <FrontDeskAppointments /> },
+                  { path: 'providers', element: <FrontDeskProviders /> },
+                  { path: 'slots', element: <SlotManagement /> },
                 ],
               },
-              { path: "book", element: <BookAppointmentWizard /> },
+              { path: 'book', element: <BookAppointmentWizard /> },
             ],
           },
         ],

@@ -6,31 +6,24 @@ import {
   getTokenCookie,
 } from '../features/auth/slices/authSlice';
 
-const AUTH_URL = (import.meta.env.VITE_AUTH_URL ?? '').replace(/\/$/, '');
-const MAIN_URL = (import.meta.env.VITE_MAIN_URL ?? '').replace(/\/$/, '');
+// ── Base URLs ──────────────────────────────────────────────────────────────────
+// All traffic goes through the API gateway (single entry point)
+const GATEWAY_URL = (import.meta.env.VITE_GATEWAY_URL ?? '').replace(/\/$/, '');
 
-const _AUTH_URL =
-  AUTH_URL ||
+const _GATEWAY_URL =
+  GATEWAY_URL ||
   (typeof window !== 'undefined' && window.location.port === '5173'
-    ? 'http://localhost:8001'
-    : '');
-const _MAIN_URL =
-  MAIN_URL ||
-  (typeof window !== 'undefined' && window.location.port === '5173'
-    ? 'http://localhost:8000'
-    : '');
+    ? 'http://localhost:8080'          // local: run gateway locally or use direct service ports
+    : 'https://iclinic-api-gateway-717740758627.us-east1.run.app');
 
-const AUTH_PREFIXES = ['/api/v1/auth/', '/api/v1/users/'];
-
-export function resolveBaseURL(path: string): string {
-  return AUTH_PREFIXES.some((p) => path.startsWith(p)) ? _AUTH_URL : _MAIN_URL;
-}
-
+// ── Axios instance ─────────────────────────────────────────────────────────────
 const api = axios.create({
+  baseURL: _GATEWAY_URL,
   withCredentials: true,
   headers: { 'Content-Type': 'application/json' },
 });
 
+// ── Request interceptor: attach Bearer token ───────────────────────────────────
 api.interceptors.request.use(
   (config) => {
     if (!config.url) {
@@ -38,8 +31,6 @@ api.interceptors.request.use(
         new Error('[api] Request cancelled: config.url is undefined or empty'),
       );
     }
-
-    config.baseURL = resolveBaseURL(config.url);
 
     const state = store.getState() as RootState;
     const token = state.auth.token ?? getTokenCookie();
@@ -52,6 +43,7 @@ api.interceptors.request.use(
   (error) => Promise.reject(error),
 );
 
+// ── Token refresh ──────────────────────────────────────────────────────────────
 let refreshPromise: Promise<string> | null = null;
 
 function forceLogout() {
@@ -65,9 +57,11 @@ async function doRefresh(): Promise<string> {
   if (refreshPromise) return refreshPromise;
 
   refreshPromise = axios
-    .post<{ access_token: string }>(`${_AUTH_URL}/api/v1/auth/refresh`, null, {
-      withCredentials: true,
-    })
+    .post<{ access_token: string }>(
+      `${_GATEWAY_URL}/api/v1/auth/refresh`,
+      null,
+      { withCredentials: true },  // sends refresh_token cookie automatically
+    )
     .then((res) => {
       const newToken = res.data.access_token;
 
@@ -98,6 +92,7 @@ async function doRefresh(): Promise<string> {
   return refreshPromise;
 }
 
+// ── Response interceptor: handle 401 → refresh → retry ────────────────────────
 api.interceptors.response.use(
   (response) => response,
 
@@ -116,16 +111,10 @@ api.interceptors.response.use(
 
     try {
       const newToken = await doRefresh();
-
       originalRequest.headers = {
         ...originalRequest.headers,
         Authorization: `Bearer ${newToken}`,
       };
-
-      if (originalRequest.url) {
-        originalRequest.baseURL = resolveBaseURL(originalRequest.url);
-      }
-
       return api(originalRequest);
     } catch {
       return Promise.reject(error);

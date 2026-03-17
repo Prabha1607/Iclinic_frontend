@@ -35,9 +35,6 @@ export interface BookAppointmentPayload {
   instructions?: string
 }
 
-// ── MAIN SERVICE (:8000) routes ───────────────────────────────────────────────
-
-/** POST /api/v1/voice/make-call → main-service */
 export const initiateCall = (
   to_number: string,
 ): Promise<{ status: string; call_sid?: string }> =>
@@ -47,31 +44,17 @@ export const initiateCall = (
     })
     .then((res) => res.data)
 
-/** GET /api/v1/appointment-types → main-service */
 export const fetchAppointmentTypes = (): Promise<AppointmentType[]> =>
   api.get<AppointmentType[]>('/api/v1/appointment-types').then((res) => res.data)
 
-/** POST /api/v1/booking/create → main-service */
 export const bookAppointment = (data: BookAppointmentPayload): Promise<{ message: string }> =>
   api.post<{ message: string }>('/api/v1/booking/create', data).then((res) => res.data)
 
-/** GET /api/v1/booking/list → main-service */
 export const getUserAppointments = (user_id: number): Promise<Appointment[]> =>
   api
     .get<Appointment[]>('/api/v1/booking/list', { params: { user_id, page: 1, page_size: 100 } })
     .then((res) => res.data)
 
-/**
- * GET /api/v1/users/providers/{provider_id}/slots → main-service
- *
- * This route lives in main-service (available_slots.py), but the path starts
- * with /api/v1/users/ which the axios interceptor normally routes to auth-service.
- *
- * Fix: explicitly set baseURL to MAIN_URL for this call so it bypasses the
- * prefix-based routing. The nginx config also has a dedicated regex location
- * for this path that routes it to main-service before the generic /api/v1/users/
- * block catches it.
- */
 export const fetchProviderSlots = (provider_id: number): Promise<AvailableSlot[]> =>
   api
     .get<AvailableSlot[]>(`/api/v1/users/providers/${provider_id}/slots`, {
@@ -79,9 +62,7 @@ export const fetchProviderSlots = (provider_id: number): Promise<AvailableSlot[]
     })
     .then((res) => res.data)
 
-// ── AUTH SERVICE (:8001) routes ───────────────────────────────────────────────
 
-/** GET /api/v1/users/list → auth-service (patient search) */
 export const searchPatients = (query: string): Promise<Patient[]> =>
   api
     .get<Patient[]>('/api/v1/users/list', { params: { page: 1, page_size: 100 } })
@@ -95,11 +76,9 @@ export const searchPatients = (query: string): Promise<Patient[]> =>
       ),
     )
 
-/** POST /api/v1/users/patients/create → auth-service */
 export const createPatient = (data: CreatePatientPayload): Promise<Patient> =>
   api.post<Patient>('/api/v1/users/patients/create', data).then((res) => res.data)
 
-/** GET /api/v1/users/providers/by-type → auth-service */
 export const fetchProvidersByType = (appointment_type_id: number): Promise<ProviderDetail[]> =>
   api
     .get<ProviderDetail[]>('/api/v1/users/providers/by-type', {

@@ -32,8 +32,11 @@ export default function AppointmentWidget() {
     e.preventDefault();
     e.stopPropagation();
 
-    if (!phone.trim()) {
-      setError('Please enter a valid phone number.');
+    const trimmedPhone = phone.trim();
+  
+    const phoneRegex = /^[\+]?[1-9][\d]{0,15}$/;
+    if (!trimmedPhone || !phoneRegex.test(trimmedPhone)) {
+      setError('Please enter a valid phone number (e.g., +919876543210)');
       return;
     }
 

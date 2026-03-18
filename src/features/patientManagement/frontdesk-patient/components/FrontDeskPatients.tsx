@@ -797,7 +797,6 @@ export default function FrontDeskPatients() {
                 <thead>
                   <tr className="border-b border-slate-100 bg-slate-50/70">
                     {[
-                      'ID',
                       'Name',
                       'Email',
                       'Phone',
@@ -817,9 +816,6 @@ export default function FrontDeskPatients() {
                 <tbody className="divide-y divide-slate-50">
                   {filtered.map((p) => (
                     <tr key={p.id} className="trow transition-colors">
-                      <td className="px-5 py-3.5 text-slate-400 text-xs font-medium">
-                        #{p.id}
-                      </td>
                       <td className="px-5 py-3.5">
                         <div className="flex items-center gap-3">
                           <div

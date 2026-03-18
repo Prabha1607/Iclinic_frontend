@@ -458,10 +458,7 @@ export default function PatientProfile() {
                       {formatDate(p.created_at)}
                     </span>
                   </div>
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="text-slate-400">Patient ID</span>
-                    <span className="font-semibold text-slate-600">#{p.id}</span>
-                  </div>
+
                 </div>
               </div>
             </div>

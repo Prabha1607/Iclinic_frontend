@@ -116,7 +116,7 @@ function ViewModal({
         <div className="flex items-start justify-between px-6 pt-5 pb-4 border-b border-slate-100">
           <div>
             <p className="text-xs font-semibold uppercase tracking-widest text-[#3b5bfc] mb-1">
-              Appointment #{appointment.id}
+              Appointment Details
             </p>
             <h3
               className="text-xl font-bold text-[#0f1340]"
@@ -966,7 +966,6 @@ export default function FrontDeskAppointments() {
                 <thead>
                   <tr className="border-b border-slate-100 bg-slate-50/70">
                     {[
-                      '#',
                       'Patient',
                       'Doctor',
                       'Date',
@@ -998,10 +997,6 @@ export default function FrontDeskAppointments() {
 
                     return (
                       <tr key={appt.id} className="trow transition-colors">
-                        <td className="px-5 py-3.5 text-slate-400 text-xs">
-                          #{appt.id}
-                        </td>
-
                         <td className="px-5 py-3.5">
                           <div className="flex items-center gap-2.5">
                             <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#3b5bfc] to-[#7c9afc] flex items-center justify-center text-white text-xs font-bold flex-shrink-0">

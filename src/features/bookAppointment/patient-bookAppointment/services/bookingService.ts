@@ -57,9 +57,7 @@ export const getUserAppointments = (user_id: number): Promise<Appointment[]> =>
 
 export const fetchProviderSlots = (provider_id: number): Promise<AvailableSlot[]> =>
   api
-    .get<AvailableSlot[]>(`/api/v1/users/providers/${provider_id}/slots`, {
-      baseURL: (import.meta.env.VITE_MAIN_URL ?? 'http://localhost:8000').replace(/\/$/, ''),
-    })
+    .get<AvailableSlot[]>(`/api/v1/slots/providers/${provider_id}`)
     .then((res) => res.data)
 
 

@@ -1,5 +1,5 @@
-import { Navigate } from "react-router-dom";
-import { useAppSelector } from "../hooks/hooks";
+import { Navigate } from 'react-router-dom';
+import { useAppSelector } from '../hooks/hooks';
 
 interface Props {
   allowedRoles: number[];

@@ -1,1 +1,24 @@
 @import "tailwindcss";
+
+/* Fix for 100% zoom rendering in Chrome/Edge on Linux (Ubuntu) */
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  zoom: reset;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+body {
+  min-height: 100dvh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}

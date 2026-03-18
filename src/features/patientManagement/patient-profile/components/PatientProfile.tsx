@@ -9,7 +9,6 @@ import type { Patient } from "../../../../common/DataModels/Patient";
 import { rules, collectErrors, type FieldErrors } from "../../../../common/validation";
 import Header from "../../../../components/Header";
 
-// ─── Helpers ─────────────────────────────────────────────────────────────────
 function formatDate(d: string | null | undefined) {
   if (!d) return "—";
   return new Date(d).toLocaleDateString("en-IN", {
@@ -46,7 +45,6 @@ function avatarGrad(id: number) {
   return `linear-gradient(135deg, ${a}, ${b})`;
 }
 
-// ─── Toast ────────────────────────────────────────────────────────────────────
 function Toast({
   message,
   type,
@@ -105,7 +103,7 @@ function ic(base: string, err?: string) {
 function ViewField({ label, value }: { label: string; value: string }) {
   return (
     <div className="py-3.5 border-b border-slate-100 last:border-0">
-      <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-0.5">
+      <p className="text-[10px] font-bold uppercase tracking-widest text-slate-600 mb-0.5">
         {label}
       </p>
       <p className="text-sm font-semibold text-[#0f1340]">{value || "—"}</p>
@@ -113,7 +111,6 @@ function ViewField({ label, value }: { label: string; value: string }) {
   );
 }
 
-// ─── Skeleton ─────────────────────────────────────────────────────────────────
 function Skeleton() {
   return (
     <div
@@ -153,7 +150,6 @@ function Skeleton() {
   );
 }
 
-// ─── Main ─────────────────────────────────────────────────────────────────────
 export default function PatientProfile() {
   const userId = useAppSelector((s) => s.auth.userId);
   const [patient, setPatient] = useState<Patient | null>(null);
@@ -214,19 +210,16 @@ export default function PatientProfile() {
   }, [userId]);
 
   const validate = (f = form): FieldErrors => {
-    // Basic email format check
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const emailErr =
       rules.required(f.email, "Email") ||
       (!emailRegex.test(f.email) ? "Enter a valid email address" : "");
 
-    // Phone: digits only, 7–15 chars
     const phoneRegex = /^\d{7,15}$/;
     const phoneErr =
       rules.required(f.phone_no, "Phone number") ||
       (!phoneRegex.test(f.phone_no) ? "Enter a valid phone number (7–15 digits)" : "");
 
-    // Country code: must start with +
     const ccErr =
       rules.required(f.country_code, "Country code") ||
       (!/^\+\d{1,4}$/.test(f.country_code) ? "e.g. +91" : "");
@@ -376,19 +369,18 @@ export default function PatientProfile() {
             Account
           </p>
           <h1
-            className="text-3xl font-bold text-[#0f1340]"
+            className="text-3xl font-bold text-[#0f172a]"
             style={{ fontFamily: "'Syne', sans-serif" }}
           >
             My Profile
           </h1>
-          <p className="text-sm text-slate-400 mt-1">
+          <p className="text-sm text-slate-500 mt-1">
             View and manage your personal and medical details.
           </p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-          {/* ── Left: Avatar card ── */}
           <div>
             <div className="bg-white rounded-3xl border border-blue-50 shadow-sm overflow-hidden sticky top-24">
               <div
@@ -403,13 +395,13 @@ export default function PatientProfile() {
                   {getInitials(p.first_name, p.last_name)}
                 </div>
                 <h2
-                  className="text-lg font-bold text-[#0f1340]"
+                  className="text-lg font-bold text-[#0f172a]"
                   style={{ fontFamily: "'Syne', sans-serif" }}
                 >
                   {p.first_name} {p.last_name}
                 </h2>
-                <p className="text-xs text-slate-400 mt-0.5 truncate px-2">{p.email}</p>
-                <p className="text-xs text-slate-400 mt-0.5">
+                <p className="text-xs text-slate-500 mt-0.5 truncate px-2">{p.email}</p>
+                <p className="text-xs text-slate-500 mt-0.5">
                   {p.country_code} {p.phone_no}
                 </p>
                 <span
@@ -431,7 +423,7 @@ export default function PatientProfile() {
               <div className="px-6 pb-6">
                 <div className="bg-slate-50 rounded-2xl p-4 border border-slate-100 mb-4">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs font-bold uppercase tracking-widest text-slate-400">
+                    <span className="text-xs font-bold uppercase tracking-widest text-slate-600">
                       Profile
                     </span>
                     <span className="text-sm font-bold text-[#3b5bfc]">{completion}%</span>
@@ -446,28 +438,25 @@ export default function PatientProfile() {
                     />
                   </div>
                   {completion < 100 && (
-                    <p className="text-[11px] text-slate-400 mt-2">
+                    <p className="text-[11px] text-slate-500 mt-2">
                       Complete your profile for a better experience.
                     </p>
                   )}
                 </div>
                 <div className="space-y-2">
                   <div className="flex items-center justify-between text-xs">
-                    <span className="text-slate-400">Member Since</span>
-                    <span className="font-semibold text-slate-600">
+                    <span className="text-slate-500">Member Since</span>
+                    <span className="font-semibold text-slate-700">
                       {formatDate(p.created_at)}
                     </span>
                   </div>
-
                 </div>
               </div>
             </div>
           </div>
 
-          {/* ── Right: Detail cards ── */}
           <div className="lg:col-span-2 space-y-5">
 
-            {/* Account Information */}
             <div className="bg-white rounded-3xl border border-blue-50 shadow-sm overflow-hidden">
               <div className="flex items-center justify-between px-6 pt-5 pb-4 border-b border-slate-100">
                 <div className="flex items-center gap-2">
@@ -486,7 +475,7 @@ export default function PatientProfile() {
                       />
                     </svg>
                   </div>
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+                  <p className="text-xs font-bold uppercase tracking-widest text-slate-700">
                     Account Information
                   </p>
                 </div>
@@ -516,10 +505,10 @@ export default function PatientProfile() {
               <div className="px-6 py-5">
                 {editing ? (
                   <div className="space-y-4">
-                    {/* Name */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1.5">
+                        {/* ✅ FIX: form field labels — text-slate-400 → text-slate-600 */}
+                        <label className="block text-xs font-bold uppercase tracking-widest text-slate-600 mb-1.5">
                           First Name <span className="text-red-400">*</span>
                         </label>
                         <input
@@ -533,7 +522,7 @@ export default function PatientProfile() {
                         <FieldMsg msg={fieldErrors.first_name} />
                       </div>
                       <div>
-                        <label className="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1.5">
+                        <label className="block text-xs font-bold uppercase tracking-widest text-slate-600 mb-1.5">
                           Last Name <span className="text-red-400">*</span>
                         </label>
                         <input
@@ -548,9 +537,8 @@ export default function PatientProfile() {
                       </div>
                     </div>
 
-                    {/* Email — now editable */}
                     <div>
-                      <label className="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1.5">
+                      <label className="block text-xs font-bold uppercase tracking-widest text-slate-600 mb-1.5">
                         Email <span className="text-red-400">*</span>
                       </label>
                       <input
@@ -565,9 +553,8 @@ export default function PatientProfile() {
                       <FieldMsg msg={fieldErrors.email} />
                     </div>
 
-                    {/* Phone — now editable */}
                     <div>
-                      <label className="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1.5">
+                      <label className="block text-xs font-bold uppercase tracking-widest text-slate-600 mb-1.5">
                         Phone <span className="text-red-400">*</span>
                       </label>
                       <div className="flex gap-2">
@@ -596,17 +583,18 @@ export default function PatientProfile() {
                       </div>
                     </div>
 
-                    {/* Password */}
                     <div>
-                      <label className="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1.5">
+                      <label className="block text-xs font-bold uppercase tracking-widest text-slate-600 mb-1.5">
                         New Password
-                        <span className="ml-2 text-[10px] font-semibold text-slate-300 normal-case tracking-normal">
+                        <span className="ml-2 text-[10px] font-semibold text-slate-400 normal-case tracking-normal">
                           (leave blank to keep current)
                         </span>
                       </label>
                       <input
                         name="password"
                         type="password"
+                        autoComplete="off"
+                        data-lpignore="true"
                         value={form.password}
                         onChange={handleChange}
                         onBlur={handleBlur}
@@ -614,61 +602,6 @@ export default function PatientProfile() {
                         className={ic(inputBase, fieldErrors.password)}
                       />
                       <FieldMsg msg={fieldErrors.password} />
-                    </div>
-
-                    {serverError && (
-                      <div className="flex items-start gap-2 bg-red-50 border border-red-200 rounded-xl px-4 py-3">
-                        <svg
-                          className="w-4 h-4 text-red-500 mt-0.5 flex-shrink-0"
-                          fill="currentColor"
-                          viewBox="0 0 20 20"
-                        >
-                          <path
-                            fillRule="evenodd"
-                            d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
-                        <p className="text-sm text-red-600">{serverError}</p>
-                      </div>
-                    )}
-
-                    <div className="flex gap-3 pt-1">
-                      <button
-                        onClick={handleCancel}
-                        className="flex-1 py-2.5 text-sm font-semibold rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 transition"
-                      >
-                        Cancel
-                      </button>
-                      <button
-                        onClick={handleSave}
-                        disabled={saving}
-                        className="flex-1 py-2.5 text-sm font-bold rounded-xl bg-[#3b5bfc] text-white hover:bg-[#2f4edc] disabled:opacity-50 transition shadow-md shadow-blue-200 flex items-center justify-center gap-2"
-                      >
-                        {saving ? (
-                          <>
-                            <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                            Saving...
-                          </>
-                        ) : (
-                          <>
-                            <svg
-                              className="w-4 h-4"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M5 13l4 4L19 7"
-                              />
-                            </svg>
-                            Save Changes
-                          </>
-                        )}
-                      </button>
                     </div>
                   </div>
                 ) : (
@@ -681,7 +614,7 @@ export default function PatientProfile() {
                       value={`${p.country_code} ${p.phone_no}`}
                     />
                     <div className="py-3.5">
-                      <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-0.5">
+                      <p className="text-[10px] font-bold uppercase tracking-widest text-slate-600 mb-0.5">
                         Password
                       </p>
                       <p className="text-sm font-semibold text-slate-400 tracking-widest">
@@ -693,7 +626,6 @@ export default function PatientProfile() {
               </div>
             </div>
 
-            {/* Medical Profile */}
             <div className="bg-white rounded-3xl border border-blue-50 shadow-sm overflow-hidden">
               <div className="flex items-center gap-2 px-6 pt-5 pb-4 border-b border-slate-100">
                 <div className="w-6 h-6 rounded-lg bg-violet-500 flex items-center justify-center">
@@ -711,7 +643,7 @@ export default function PatientProfile() {
                     />
                   </svg>
                 </div>
-                <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+                <p className="text-xs font-bold uppercase tracking-widest text-slate-700">
                   Medical Profile
                 </p>
               </div>
@@ -721,7 +653,7 @@ export default function PatientProfile() {
                   <div className="space-y-4">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1.5">
+                        <label className="block text-xs font-bold uppercase tracking-widest text-slate-600 mb-1.5">
                           Date of Birth
                         </label>
                         <input
@@ -734,7 +666,7 @@ export default function PatientProfile() {
                         />
                       </div>
                       <div>
-                        <label className="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1.5">
+                        <label className="block text-xs font-bold uppercase tracking-widest text-slate-600 mb-1.5">
                           Gender
                         </label>
                         <select
@@ -753,7 +685,7 @@ export default function PatientProfile() {
                       </div>
                     </div>
                     <div>
-                      <label className="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1.5">
+                      <label className="block text-xs font-bold uppercase tracking-widest text-slate-600 mb-1.5">
                         Address
                       </label>
                       <input
@@ -765,7 +697,7 @@ export default function PatientProfile() {
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1.5">
+                      <label className="block text-xs font-bold uppercase tracking-widest text-slate-600 mb-1.5">
                         Preferred Language
                       </label>
                       <select
@@ -834,17 +766,17 @@ export default function PatientProfile() {
                           key={label}
                           className="bg-slate-50 rounded-2xl px-4 py-3.5 border border-slate-100"
                         >
-                          <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">
+                          <p className="text-[10px] font-bold uppercase tracking-widest text-slate-600 mb-1">
                             {label}
                           </p>
-                          <p className="text-sm font-semibold text-[#0f1340]">{value}</p>
+                          <p className="text-sm font-semibold text-[#0f172a]">{value}</p>
                         </div>
                       ))}
                       <div className="col-span-2 bg-slate-50 rounded-2xl px-4 py-3.5 border border-slate-100">
-                        <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">
+                        <p className="text-[10px] font-bold uppercase tracking-widest text-slate-600 mb-1">
                           Address
                         </p>
-                        <p className="text-sm font-semibold text-[#0f1340]">
+                        <p className="text-sm font-semibold text-[#0f172a]">
                           {p.patient_profile?.address ?? "—"}
                         </p>
                       </div>
@@ -853,6 +785,65 @@ export default function PatientProfile() {
                 )}
               </div>
             </div>
+
+            {editing && (
+              <div className="bg-white rounded-3xl border border-blue-50 shadow-sm px-6 py-4">
+                {serverError && (
+                  <div className="flex items-start gap-2 bg-red-50 border border-red-200 rounded-xl px-4 py-3 mb-4">
+                    <svg
+                      className="w-4 h-4 text-red-500 mt-0.5 flex-shrink-0"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                    <p className="text-sm text-red-600">{serverError}</p>
+                  </div>
+                )}
+                <div className="flex gap-3">
+                  <button
+                    onClick={handleCancel}
+                    className="flex-1 py-2.5 text-sm font-semibold rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 transition"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleSave}
+                    disabled={saving}
+                    className="flex-1 py-2.5 text-sm font-bold rounded-xl bg-[#3b5bfc] text-white hover:bg-[#2f4edc] disabled:opacity-50 transition shadow-md shadow-blue-200 flex items-center justify-center gap-2"
+                  >
+                    {saving ? (
+                      <>
+                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                        Saving...
+                      </>
+                    ) : (
+                      <>
+                        <svg
+                          className="w-4 h-4"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M5 13l4 4L19 7"
+                          />
+                        </svg>
+                        Save Changes
+                      </>
+                    )}
+                  </button>
+                </div>
+              </div>
+            )}
+
           </div>
         </div>
       </main>

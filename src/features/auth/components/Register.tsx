@@ -27,6 +27,7 @@ interface FormState {
   password: string;
   confirmPassword: string;
 }
+
 const INIT: FormState = {
   first_name: '',
   last_name: '',
@@ -54,12 +55,39 @@ function FieldMsg({ msg }: { msg?: string }) {
 }
 
 function ic(err?: string) {
-  return `w-full px-4 py-2.5 rounded-xl border text-blue-900 placeholder-blue-300 focus:outline-none focus:ring-2 focus:border-transparent transition text-sm ${
+  return `w-full px-4 py-2.5 pr-10 rounded-xl border text-blue-900 placeholder-blue-300 focus:outline-none focus:ring-2 focus:border-transparent transition text-sm ${
     err
       ? 'border-red-400 bg-red-50/30 focus:ring-red-300'
       : 'border-blue-200 bg-blue-50/50 focus:ring-blue-400'
   }`;
 }
+
+const EyeIcon = ({ show }: { show: boolean }) =>
+  show ? (
+    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"
+      />
+    </svg>
+  ) : (
+    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+      />
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+      />
+    </svg>
+  );
 
 export default function Register() {
   const navigate = useNavigate();
@@ -138,306 +166,244 @@ export default function Register() {
   const lbl = 'block text-sm font-medium text-blue-800 mb-1.5';
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50 flex flex-col">
-      <Header />
-      <div className="flex-1 flex items-center justify-center px-4 py-10">
-        <div className="w-full max-w-lg">
-          <div className="bg-white rounded-2xl shadow-lg border border-blue-100 p-8">
-            <div className="mb-8">
-              <h2 className="text-2xl font-bold text-blue-900 mb-1">Create account</h2>
-              <p className="text-sm text-blue-400">
-                Join iClinic to manage appointments
-              </p>
-            </div>
-
-            <form onSubmit={handleSubmit} noValidate className="space-y-4">
-              
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label htmlFor="first_name" className={lbl}>
-                    First Name <span className="text-red-400">*</span>
-                  </label>
-                  <input
-                    id="first_name"
-                    name="first_name"
-                    type="text"
-                    autoComplete="given-name"
-                    value={form.first_name}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    placeholder="John"
-                    className={ic(fieldErrors.first_name)}
-                  />
-                  <FieldMsg msg={fieldErrors.first_name} />
-                </div>
-                <div>
-                  <label htmlFor="last_name" className={lbl}>
-                    Last Name <span className="text-red-400">*</span>
-                  </label>
-                  <input
-                    id="last_name"
-                    name="last_name"
-                    type="text"
-                    autoComplete="family-name"
-                    value={form.last_name}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    placeholder="Doe"
-                    className={ic(fieldErrors.last_name)}
-                  />
-                  <FieldMsg msg={fieldErrors.last_name} />
-                </div>
+    <>
+      <style>{`
+        input[type="password"]::-ms-reveal,
+        input[type="password"]::-ms-clear,
+        input::-webkit-credentials-auto-fill-button,
+        input::-webkit-strong-password-auto-fill-button,
+        input[type="password"]::-webkit-caps-lock-indicator {
+          display: none !important;
+          visibility: hidden !important;
+          pointer-events: none !important;
+        }
+      `}</style>
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50 flex flex-col">
+        <Header />
+        <div className="flex-1 flex items-center justify-center px-4 py-10">
+          <div className="w-full max-w-lg">
+            <div className="bg-white rounded-2xl shadow-lg border border-blue-100 p-8">
+              <div className="mb-8">
+                <h2 className="text-2xl font-bold text-blue-900 mb-1">Create account</h2>
+                <p className="text-sm text-blue-400">
+                  Join iClinic to manage appointments
+                </p>
               </div>
 
-              
-              <div>
-                <label htmlFor="email" className={lbl}>
-                  Email <span className="text-red-400">*</span>
-                </label>
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  autoComplete="email"
-                  value={form.email}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  placeholder="you@example.com"
-                  className={ic(fieldErrors.email)}
-                />
-                <FieldMsg msg={fieldErrors.email} />
-              </div>
+              <form onSubmit={handleSubmit} noValidate className="space-y-4">
 
-              
-              <div>
-                <label htmlFor="phone_no" className={lbl}>
-                  Phone Number <span className="text-red-400">*</span>
-                </label>
-                <div className="flex gap-2">
-                  <select
-                    name="country_code"
-                    value={form.country_code}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    className="px-3 py-2.5 rounded-xl border border-blue-200 bg-blue-50/50 text-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm flex-shrink-0"
-                  >
-                    {COUNTRY_CODES.map((c) => (
-                      <option key={c.value} value={c.value}>
-                        {c.label}
-                      </option>
-                    ))}
-                  </select>
-                  <div className="flex-1">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label htmlFor="first_name" className={lbl}>
+                      First Name <span className="text-red-400">*</span>
+                    </label>
                     <input
-                      id="phone_no"
-                      name="phone_no"
-                      type="tel"
-                      autoComplete="tel"
-                      value={form.phone_no}
+                      id="first_name"
+                      name="first_name"
+                      type="text"
+                      autoComplete="given-name"
+                      value={form.first_name}
                       onChange={handleChange}
                       onBlur={handleBlur}
-                      placeholder="9876543210"
-                      className={ic(fieldErrors.phone_no)}
+                      placeholder="John"
+                      className={ic(fieldErrors.first_name)}
                     />
+                    <FieldMsg msg={fieldErrors.first_name} />
+                  </div>
+                  <div>
+                    <label htmlFor="last_name" className={lbl}>
+                      Last Name <span className="text-red-400">*</span>
+                    </label>
+                    <input
+                      id="last_name"
+                      name="last_name"
+                      type="text"
+                      autoComplete="family-name"
+                      value={form.last_name}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      placeholder="Doe"
+                      className={ic(fieldErrors.last_name)}
+                    />
+                    <FieldMsg msg={fieldErrors.last_name} />
                   </div>
                 </div>
-                <FieldMsg msg={fieldErrors.phone_no} />
-              </div>
 
-              
-              <div>
-                <label htmlFor="password" className={lbl}>
-                  Password <span className="text-red-400">*</span>
-                </label>
-                <div className="relative">
+                <div>
+                  <label htmlFor="email" className={lbl}>
+                    Email <span className="text-red-400">*</span>
+                  </label>
                   <input
-                    id="password"
-                    name="password"
-                    type={showPassword ? 'text' : 'password'}
-                    autoComplete="new-password"
-                    value={form.password}
+                    id="email"
+                    name="email"
+                    type="email"
+                    autoComplete="email"
+                    value={form.email}
                     onChange={handleChange}
                     onBlur={handleBlur}
-                    placeholder="Min 6 chars, 1 uppercase, 1 number, 1 symbol"
-                    className={ic(fieldErrors.password)}
+                    placeholder="you@example.com"
+                    className={ic(fieldErrors.email)}
                   />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword((v) => !v)}
-                    className="absolute inset-y-0 right-3 flex items-center text-blue-300 hover:text-blue-600 transition-colors"
-                    tabIndex={-1}
-                    aria-label={showPassword ? 'Hide password' : 'Show password'}
-                  >
-                    {showPassword ? (
-                      <svg
-                        className="w-4 h-4"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"
-                        />
-                      </svg>
-                    ) : (
-                      <svg
-                        className="w-4 h-4"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                        />
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-                        />
-                      </svg>
-                    )}
-                  </button>
+                  <FieldMsg msg={fieldErrors.email} />
                 </div>
-                <FieldMsg msg={fieldErrors.password} />
-              </div>
 
-              
-              <div>
-                <label htmlFor="confirmPassword" className={lbl}>
-                  Confirm Password <span className="text-red-400">*</span>
-                </label>
-                <div className="relative">
-                  <input
-                    id="confirmPassword"
-                    name="confirmPassword"
-                    type={showConfirmPassword ? 'text' : 'password'}
-                    autoComplete="new-password"
-                    value={form.confirmPassword}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    placeholder="Repeat password"
-                    className={ic(fieldErrors.confirmPassword)}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowConfirmPassword((v) => !v)}
-                    className="absolute inset-y-0 right-3 flex items-center text-blue-300 hover:text-blue-600 transition-colors"
-                    tabIndex={-1}
-                    aria-label={showConfirmPassword ? 'Hide password' : 'Show password'}
-                  >
-                    {showConfirmPassword ? (
-                      <svg
-                        className="w-4 h-4"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"
-                        />
-                      </svg>
-                    ) : (
-                      <svg
-                        className="w-4 h-4"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                        />
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-                        />
-                      </svg>
-                    )}
-                  </button>
-                </div>
-                <FieldMsg msg={fieldErrors.confirmPassword} />
-              </div>
-
-              
-              {serverError && (
-                <div className="flex items-start gap-2 bg-red-50 border border-red-200 rounded-xl px-4 py-3">
-                  <svg
-                    className="w-4 h-4 text-red-500 mt-0.5 flex-shrink-0"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                  <p role="alert" className="text-sm text-red-600">
-                    {serverError}
-                  </p>
-                </div>
-              )}
-
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-300 text-white font-semibold py-2.5 rounded-xl transition-colors shadow-sm text-sm mt-2"
-              >
-                {loading ? (
-                  <span className="flex items-center justify-center gap-2">
-                    <svg
-                      className="animate-spin w-4 h-4"
-                      fill="none"
-                      viewBox="0 0 24 24"
+                <div>
+                  <label htmlFor="phone_no" className={lbl}>
+                    Phone Number <span className="text-red-400">*</span>
+                  </label>
+                  <div className="flex gap-2">
+                    <select
+                      name="country_code"
+                      value={form.country_code}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      className="px-3 py-2.5 rounded-xl border border-blue-200 bg-blue-50/50 text-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm flex-shrink-0"
                     >
-                      <circle
-                        className="opacity-25"
-                        cx="12"
-                        cy="12"
-                        r="10"
-                        stroke="currentColor"
-                        strokeWidth="4"
+                      {COUNTRY_CODES.map((c) => (
+                        <option key={c.value} value={c.value}>
+                          {c.label}
+                        </option>
+                      ))}
+                    </select>
+                    <div className="flex-1">
+                      <input
+                        id="phone_no"
+                        name="phone_no"
+                        type="tel"
+                        autoComplete="tel"
+                        value={form.phone_no}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        placeholder="9876543210"
+                        className={ic(fieldErrors.phone_no)}
                       />
+                    </div>
+                  </div>
+                  <FieldMsg msg={fieldErrors.phone_no} />
+                </div>
+
+                <div>
+                  <label htmlFor="password" className={lbl}>
+                    Password <span className="text-red-400">*</span>
+                  </label>
+                  <div className="relative">
+                    <input
+                      id="password"
+                      name="password"
+                      type={showPassword ? 'text' : 'password'}
+                      autoComplete="off"
+                      data-lpignore="true"
+                      value={form.password}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      placeholder="Min 6 chars, 1 uppercase, 1 number, 1 symbol"
+                      className={ic(fieldErrors.password)}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword((v) => !v)}
+                      className="absolute inset-y-0 right-3 flex items-center text-blue-300 hover:text-blue-600 transition-colors"
+                      tabIndex={-1}
+                      aria-label={showPassword ? 'Hide password' : 'Show password'}
+                    >
+                      <EyeIcon show={showPassword} />
+                    </button>
+                  </div>
+                  <FieldMsg msg={fieldErrors.password} />
+                </div>
+
+                <div>
+                  <label htmlFor="confirmPassword" className={lbl}>
+                    Confirm Password <span className="text-red-400">*</span>
+                  </label>
+                  <div className="relative">
+                    <input
+                      id="confirmPassword"
+                      name="confirmPassword"
+                      type={showConfirmPassword ? 'text' : 'password'}
+                      autoComplete="off"
+                      data-lpignore="true"
+                      value={form.confirmPassword}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      placeholder="Repeat password"
+                      className={ic(fieldErrors.confirmPassword)}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowConfirmPassword((v) => !v)}
+                      className="absolute inset-y-0 right-3 flex items-center text-blue-300 hover:text-blue-600 transition-colors"
+                      tabIndex={-1}
+                      aria-label={showConfirmPassword ? 'Hide password' : 'Show password'}
+                    >
+                      <EyeIcon show={showConfirmPassword} />
+                    </button>
+                  </div>
+                  <FieldMsg msg={fieldErrors.confirmPassword} />
+                </div>
+
+                {serverError && (
+                  <div className="flex items-start gap-2 bg-red-50 border border-red-200 rounded-xl px-4 py-3">
+                    <svg
+                      className="w-4 h-4 text-red-500 mt-0.5 flex-shrink-0"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
                       <path
-                        className="opacity-75"
-                        fill="currentColor"
-                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+                        fillRule="evenodd"
+                        d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                        clipRule="evenodd"
                       />
                     </svg>
-                    Registering...
-                  </span>
-                ) : (
-                  'Create Account'
+                    <p role="alert" className="text-sm text-red-600">
+                      {serverError}
+                    </p>
+                  </div>
                 )}
-              </button>
-            </form>
 
-            <p className="mt-6 text-center text-sm text-blue-400">
-              Already have an account?{' '}
-              <Link
-                to="/login"
-                className="text-blue-600 font-medium hover:text-blue-800 transition-colors"
-              >
-                Login
-              </Link>
-            </p>
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-300 text-white font-semibold py-2.5 rounded-xl transition-colors shadow-sm text-sm mt-2"
+                >
+                  {loading ? (
+                    <span className="flex items-center justify-center gap-2">
+                      <svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                        />
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+                        />
+                      </svg>
+                      Registering...
+                    </span>
+                  ) : (
+                    'Create Account'
+                  )}
+                </button>
+              </form>
+
+              <p className="mt-6 text-center text-sm text-blue-400">
+                Already have an account?{' '}
+                <Link
+                  to="/login"
+                  className="text-blue-600 font-medium hover:text-blue-800 transition-colors"
+                >
+                  Login
+                </Link>
+              </p>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }

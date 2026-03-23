@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { getAppointments, cancelAppointment } from '../services/frontDeskService';
-import { useAppSelector } from '../../../../hooks/hooks';
+
 import type { Appointment } from '../../../../common/DataModels/Appointments';
 
 type StatusFilter = 'ALL' | Appointment['status'];
@@ -684,15 +684,12 @@ export default function FrontDeskAppointments() {
     type: 'success' | 'error';
   } | null>(null);
 
-  const token = useAppSelector((s) => s.auth.token);
-
   const showToast = (text: string, type: 'success' | 'error') => {
     setToast({ text, type });
     setTimeout(() => setToast(null), 3500);
   };
 
   const fetchAppointments = useCallback(async () => {
-    if (!token) return;
     setLoading(true);
     setError('');
     try {
@@ -710,11 +707,11 @@ export default function FrontDeskAppointments() {
     } finally {
       setLoading(false);
     }
-  }, [page, pageSize, appliedStatus, appliedFrom, appliedTo, token]);
+  }, [page, pageSize, appliedStatus, appliedFrom, appliedTo]);
 
   useEffect(() => {
-    if (token) fetchAppointments();
-  }, [fetchAppointments, token]);
+    fetchAppointments();
+  }, [fetchAppointments]);
 
   const filtered = appointments.filter((a) => {
     const q = search.toLowerCase();

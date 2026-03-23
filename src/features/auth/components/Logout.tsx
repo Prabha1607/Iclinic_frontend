@@ -14,12 +14,15 @@ export default function Logout() {
     e.stopPropagation();
     setIsLoading(true);
 
-    dispatch(clearCredentials());
-
     try {
+      // Call logout endpoint FIRST — this clears the HttpOnly cookies server-side.
+      // validateStatus: true so we don't throw on non-2xx (e.g. already expired token).
       await api.get('/api/v1/auth/logout', { validateStatus: () => true });
     } catch {
+      // Network error — proceed with local cleanup anyway
     } finally {
+      // Clear Redux state after the server has cleared the cookies
+      dispatch(clearCredentials());
       setIsLoading(false);
       navigate('/login');
     }
@@ -33,28 +36,13 @@ export default function Logout() {
     >
       {isLoading ? (
         <svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
-          <circle
-            className="opacity-25"
-            cx="12"
-            cy="12"
-            r="10"
-            stroke="currentColor"
-            strokeWidth="4"
-          />
-          <path
-            className="opacity-75"
-            fill="currentColor"
-            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
-          />
+          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
         </svg>
       ) : (
         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-          />
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+            d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
         </svg>
       )}
       {isLoading ? 'Logging out...' : 'Logout'}

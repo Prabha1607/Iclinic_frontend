@@ -1,21 +1,11 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 import type { AuthState } from '../../../common/DataModels/User';
 
-const COOKIE_NAME = 'app_token';
-
-export function getTokenCookie(): string | null {
-  const match = document.cookie.match(/(?:^|;\s*)app_token=([^;]+)/);
-  return match ? decodeURIComponent(match[1]) : null;
-}
-
-function setTokenCookie(token: string) {
-  const expires = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toUTCString();
-  document.cookie = `${COOKIE_NAME}=${encodeURIComponent(token)}; expires=${expires}; path=/; SameSite=Lax`;
-}
-
-function clearTokenCookie() {
-  document.cookie = `${COOKIE_NAME}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; SameSite=Lax`;
-}
+// Token is HttpOnly now — JS cannot read it from cookie.
+// We keep the token ONLY in Redux memory (populated from login/refresh response body).
+// On hard reload, token is gone from Redux but the HttpOnly cookie is still sent by
+// the browser. The first protected API call will 401 → doRefresh() → new access_token
+// comes back in the response body → Redux is repopulated.
 
 export function parseJwt(token: string): Record<string, unknown> | null {
   try {
@@ -26,23 +16,14 @@ export function parseJwt(token: string): Record<string, unknown> | null {
   }
 }
 
+// Kept for backward compat but always returns null now (cookie is HttpOnly)
+export function getTokenCookie(): string | null {
+  return null;
+}
+
 function buildInitialState(): AuthState {
-  const token = getTokenCookie();
-  if (token) {
-    const payload = parseJwt(token);
-    if (payload) {
-      const exp = payload.exp as number | undefined;
-      if (!exp || exp * 1000 > Date.now()) {
-        return {
-          token,
-          isAuthenticated: true,
-          userId: (payload.id as number) ?? null,
-          roleId: (payload.role_id as number) ?? null,
-        };
-      }
-      clearTokenCookie();
-    }
-  }
+  // Can't read HttpOnly cookie — start unauthenticated.
+  // The axios response interceptor will refresh on first 401.
   return { token: null, isAuthenticated: false, userId: null, roleId: null };
 }
 
@@ -67,14 +48,13 @@ const authSlice = createSlice({
       state.isAuthenticated = true;
       state.userId = user?.id ?? null;
       state.roleId = user?.role_id ?? null;
-      if (token) setTokenCookie(token);
+      // No cookie write — gateway sets HttpOnly cookies server-side
     },
     clearCredentials(state) {
       state.token = null;
       state.isAuthenticated = false;
       state.userId = null;
       state.roleId = null;
-      clearTokenCookie();
     },
   },
 });
